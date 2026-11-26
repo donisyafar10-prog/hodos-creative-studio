@@ -74,9 +74,9 @@ describe('calculateMedals', () => {
 
   it('awards top 3 medals to teams', () => {
     const results = [
-      { posisi: 1, teamId: 't1', teamNama: 'Tim A', nama: 'A1', jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 4 },
-      { posisi: 2, teamId: 't2', teamNama: 'Tim B', nama: 'A2', jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 5 },
-      { posisi: 3, teamId: 't1', teamNama: 'Tim A', nama: 'A3', jenisKelamin: 'putri', isEstafet: false, categoryId: 'c1', lane: 6 },
+      { participantId: 'p1', posisi: 1, teamId: 't1', teamNama: 'Tim A', nama: 'A1', waktuAkhir: '20,00', ket: null, rekorFlag: false, jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 4 },
+      { participantId: 'p2', posisi: 2, teamId: 't2', teamNama: 'Tim B', nama: 'A2', waktuAkhir: '21,00', ket: null, rekorFlag: false, jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 5 },
+      { participantId: 'p3', posisi: 3, teamId: 't1', teamNama: 'Tim A', nama: 'A3', waktuAkhir: '22,00', ket: null, rekorFlag: false, jenisKelamin: 'putri', isEstafet: false, categoryId: 'c1', lane: 6 },
     ]
 
     const { teamMedals } = calculateMedals(results, teams)
@@ -92,7 +92,7 @@ describe('calculateMedals', () => {
 
   it('includes teams with 0 medals', () => {
     const results = [
-      { posisi: 1, teamId: 't1', teamNama: 'Tim A', nama: 'A1', jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 4 },
+      { participantId: 'p1', posisi: 1, teamId: 't1', teamNama: 'Tim A', nama: 'A1', waktuAkhir: '20,00', ket: null, rekorFlag: false, jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 4 },
     ]
 
     const { teamMedals } = calculateMedals(results, teams)
@@ -105,9 +105,9 @@ describe('calculateMedals', () => {
 
   it('sorts teams by medal count desc', () => {
     const results = [
-      { posisi: 1, teamId: 't2', teamNama: 'Tim B', nama: 'A1', jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 4 },
-      { posisi: 1, teamId: 't1', teamNama: 'Tim A', nama: 'A2', jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 5 },
-      { posisi: 2, teamId: 't2', teamNama: 'Tim B', nama: 'A3', jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 6 },
+      { participantId: 'p1', posisi: 1, teamId: 't2', teamNama: 'Tim B', nama: 'A1', waktuAkhir: '20,00', ket: null, rekorFlag: false, jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 4 },
+      { participantId: 'p2', posisi: 1, teamId: 't1', teamNama: 'Tim A', nama: 'A2', waktuAkhir: '20,00', ket: null, rekorFlag: false, jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 5 },
+      { participantId: 'p3', posisi: 2, teamId: 't2', teamNama: 'Tim B', nama: 'A3', waktuAkhir: '21,00', ket: null, rekorFlag: false, jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 6 },
     ]
 
     const { teamMedals } = calculateMedals(results, teams)
@@ -118,8 +118,8 @@ describe('calculateMedals', () => {
 
   it('best swimmer separates by gender', () => {
     const results = [
-      { posisi: 1, teamId: 't1', teamNama: 'Tim A', nama: 'P1', jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 4 },
-      { posisi: 1, teamId: 't1', teamNama: 'Tim A', nama: 'P2', jenisKelamin: 'putri', isEstafet: false, categoryId: 'c1', lane: 5 },
+      { participantId: 'p1', posisi: 1, teamId: 't1', teamNama: 'Tim A', nama: 'P1', waktuAkhir: '20,00', ket: null, rekorFlag: false, jenisKelamin: 'putra', isEstafet: false, categoryId: 'c1', lane: 4 },
+      { participantId: 'p2', posisi: 1, teamId: 't1', teamNama: 'Tim A', nama: 'P2', waktuAkhir: '20,00', ket: null, rekorFlag: false, jenisKelamin: 'putri', isEstafet: false, categoryId: 'c1', lane: 5 },
     ]
 
     const { bestSwimmerPutra, bestSwimmerPutri } = calculateMedals(results, teams)
@@ -132,7 +132,7 @@ describe('calculateMedals', () => {
 
   it('excludes estafet from best swimmer', () => {
     const results = [
-      { posisi: 1, teamId: 't1', teamNama: 'Tim A', nama: 'E1', jenisKelamin: 'putra', isEstafet: true, categoryId: 'c1', lane: 4 },
+      { participantId: 'p1', posisi: 1, teamId: 't1', teamNama: 'Tim A', nama: 'E1', waktuAkhir: '20,00', ket: null, rekorFlag: false, jenisKelamin: 'putra', isEstafet: true, categoryId: 'c1', lane: 4 },
     ]
 
     const { bestSwimmerPutra } = calculateMedals(results, teams)

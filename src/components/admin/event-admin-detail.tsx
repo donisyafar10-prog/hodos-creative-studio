@@ -87,6 +87,18 @@ export default function EventAdminDetail({
           >
             Kembali
           </Link>
+          <a
+            href={`/download/buku-acara/${event.id}`}
+            className="px-4 py-2 text-sm bg-helix-bg text-helix-fg rounded hover:bg-helix-bg/90 font-medium uppercase"
+          >
+            Unduh Buku Acara
+          </a>
+          <a
+            href={`/download/buku-hasil/${event.id}`}
+            className="px-4 py-2 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 font-medium uppercase"
+          >
+            Unduh Buku Hasil
+          </a>
         </div>
       </div>
 
