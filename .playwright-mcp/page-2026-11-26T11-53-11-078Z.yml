@@ -1,0 +1,19 @@
+- generic [active] [ref=f7e1]:
+  - generic [ref=f7e3]:
+    - generic [ref=f7e4]:
+      - heading "Hodos Creative Studio" [level=1] [ref=f7e5]
+      - paragraph [ref=f7e6]: Masuk untuk mengelola event lomba renang & selam
+    - generic [ref=f7e7]:
+      - generic [ref=f7e8]:
+        - text: Email
+        - textbox "Email" [ref=f7e9]:
+          - /placeholder: nama@example.com
+      - generic [ref=f7e10]:
+        - text: Password
+        - textbox "Password" [ref=f7e11]:
+          - /placeholder: ••••••••
+      - button "Masuk" [ref=f7e12] [cursor=pointer]
+    - generic [ref=f7e13]: Belum punya akun? Hubungi Super Admin untuk membuat akun Admin.
+    - link "Kembali ke beranda" [ref=f7e15] [cursor=pointer]:
+      - /url: /
+  - alert [ref=f7e16]

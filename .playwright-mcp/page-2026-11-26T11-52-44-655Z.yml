@@ -1,0 +1,46 @@
+- generic [active] [ref=f3e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - generic [ref=f3e3]:
+    - banner [ref=f3e4]:
+      - link "Vercel logo":
+        - /url: /home
+        - button [ref=f3e5] [cursor=pointer]:
+          - img "Vercel Logo" [ref=f3e6]
+      - navigation [ref=f3e8]:
+        - navigation [ref=f3e9]:
+          - link [ref=f3e10] [cursor=pointer]:
+            - /url: /signup?next=%2Fsso-api%3Furl%3Dhttps%253A%252F%252Fhodos-creative-studio-8cqqor1s8-donisyafar10-1969.vercel.app%252Fadmin%26nonce%3Da1b1db848fe84679c7b18728b9f5899e4c2d9d3662afb59fdc759c027759f1dd
+            - paragraph [ref=f3e12]: Sign Up
+    - main [ref=f3e13]:
+      - generic [ref=f3e15]:
+        - heading "Log in to Vercel" [level=1] [ref=f3e18]
+        - generic [ref=f3e19]:
+          - generic [ref=f3e20]:
+            - textbox "Email Address" [ref=f3e23]
+            - button "Continue with Email" [ref=f3e26] [cursor=pointer]
+          - generic [ref=f3e29]:
+            - button "Continue with Google" [ref=f3e30] [cursor=pointer]:
+              - generic [ref=f3e34]:
+                - generic [ref=f3e35]: Continue with
+                - text: Google
+            - button "Continue with GitHub" [ref=f3e36] [cursor=pointer]:
+              - generic [ref=f3e40]:
+                - generic [ref=f3e41]: Continue with
+                - text: GitHub
+            - button "Continue with ChatGPT" [ref=f3e42] [cursor=pointer]:
+              - generic [ref=f3e46]:
+                - generic [ref=f3e47]: Continue with
+                - text: ChatGPT
+            - button "Continue with SAML SSO" [ref=f3e49] [cursor=pointer]
+            - button "Continue with Passkey" [ref=f3e54] [cursor=pointer]
+            - button "Show other options" [ref=f3e59] [cursor=pointer]
+        - paragraph [ref=f3e62]:
+          - text: Don't have an account?
+          - link "Sign Up" [ref=f3e63] [cursor=pointer]:
+            - /url: /signup?next=%2Fsso-api%3Furl%3Dhttps%253A%252F%252Fhodos-creative-studio-8cqqor1s8-donisyafar10-1969.vercel.app%252Fadmin%26nonce%3Da1b1db848fe84679c7b18728b9f5899e4c2d9d3662afb59fdc759c027759f1dd
+      - generic [ref=f3e66]:
+        - link "Terms" [ref=f3e67] [cursor=pointer]:
+          - /url: /legal/terms
+        - link "Privacy Policy" [ref=f3e68] [cursor=pointer]:
+          - /url: /legal/privacy-notice

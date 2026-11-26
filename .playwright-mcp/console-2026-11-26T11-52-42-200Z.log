@@ -1,0 +1,32 @@
+[    1353ms] [WARNING] Error with Feature-Policy header: Some features are specified in both Feature-Policy and Permissions-Policy header: camera. Values defined in Permissions-Policy header will be used. @ :1
+[    2018ms] [LOG] %c
+▲
+
+__  __                                     _            __
+\ \/ /___  __  __   _________ _____       (_)_  _______/ /_
+ \  / __ \/ / / /  / ___/ __ `/ __ \     / / / / / ___/ __/
+ / / /_/ / /_/ /  / /__/ /_/ / / / /    / / /_/ (__  ) /_
+/_/\____/\__,_/   \___/\__,_/_/ /_/  __/ /\__,_/____/\__/
+         __    _          __  __    /___/
+   _____/ /_  (_)___     / /_/ /_  (_)___  ____ ______
+  / ___/ __ \/ / __ \   / __/ __ \/ / __ \/ __ `/ ___/
+ (__  ) / / / / /_/ /  / /_/ / / / / / / / /_/ (__  )
+/____/_/ /_/_/ .___/   \__/_/ /_/_/_/ /_/\__, /____/
+            /_/                         /____/
+  
+
+Hello!
+
+- Open Source https://vercel.com/oss
+- Careers https://vercel.com/careers
+- Status https://www.vercel-status.com
+
+ font-family: "Geist Mono", monospace; white-space: pre; line-height: 1; @ https://vercel.com/_next/static/immutable/chunks/0izbnln25g49k.js:79
+[    2961ms] [WARNING] [GSI_LOGGER]: Your client application uses one of the Google One Tap prompt UI status methods that may stop functioning when FedCM becomes mandatory. Refer to the migration guide to update your code accordingly and opt-in to FedCM to test your changes. Learn more: https://developers.google.com/identity/gsi/web/guides/fedcm-migration?s=dc#display_moment and https://developers.google.com/identity/gsi/web/guides/fedcm-migration?s=dc#skipped_moment @ https://accounts.google.com/gsi/client:89
+[    3083ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://vercel.com/api/jwt:1
+[    3278ms] [ERROR] Not signed in with the identity provider. @ https://vercel.com/login?next=%2Fsso-api%3Furl%3Dhttps%253A%252F%252Fhodos-creative-studio-8cqqor1s8-donisyafar10-1969.vercel.app%252Fadmin%26nonce%3Da1b1db848fe84679c7b18728b9f5899e4c2d9d3662afb59fdc759c027759f1dd:1
+[    3363ms] [WARNING] Deprecated API for given entry type. @ https://vercel.com/_next/static/immutable/chunks/2uateo3j8y6li.js:19
+[    5550ms] [WARNING] No available adapters. @ https://api.sardine.ai/assets/collector.min.432a306.html?r=2026-11-04-432a306#eyJsb2FkZXJJbml0VGltZSI6MTc5NTY5Mzk2NTY1NywiZW5hYmxlQmlvbWV0cmljcyI6dHJ1ZSwiZW5hYmxlRE5TIjp0cnVlLCJyZXZpc2lvbiI6IjIwMjYtMTEtMDQtNDMyYTMwNiIsIm9yaWdpbiI6Imh0dHBzOi8vdmVyY2VsLmNvbSIsImNvbGxlY3RvckRvbWFpbiI6ImFwaS5zYXJkaW5lLmFpIiwicGl4ZWxVUkwiOiJodHRwczovL3Auc2FyZGluZS5haS92MS9iLnBuZyIsImRuc0Jhc2VEb21haW4iOiJkLnNhcmRpbmUuYWkiLCJsb2NhdGlvbiI6Imh0dHBzOi8vdmVyY2VsLmNvbS9sb2dpbj9uZXh0PSUyRnNzby1hcGklM0Z1cmwlM0RodHRwcyUyNTNBJTI1MkYlMjUyRmhvZG9zLWNyZWF0aXZlLXN0dWRpby04Y3Fxb3IxczgtZG9uaXN5YWZhcjEwLTE5NjkudmVyY2VsLmFwcCUyNTJGYWRtaW4lMjZub25jZSUzRGExYjFkYjg0OGZlODQ2NzljN2IxODcyOGI5ZjU4OTllNGMyZDlkMzY2MmFmYjU5ZmRjNzU5YzAyNzc1OWYxZGQiLCJyZWZlcnJlciI6IiIsInV1aWQiOiI1ZWEzZTM2ZC1lZThlLTQ2NDctOTQwYy1kMjA3NWJmMWVjYjAiLCJjbGllbnRJZCI6IjAxMWU3M2Q2LTMzMmYtNDRlZS04MmFiLTY1NGNmZDliMDAxMiIsInNlc3Npb25LZXkiOiI3N2ZhZjEwNi1kMzY1LTRiMTMtYTk5MC0xOTIzNmM4YTFhMjYiLCJmbG93IjoibG9naW4iLCJlbnZpcm9ubWVudCI6InByb2R1Y3Rpb24iLCJlbmFibGVSZWNvcmRlciI6ZmFsc2UsImVuYWJsZUdlb0xvY2F0aW9uIjpmYWxzZSwiZW5hYmxlUG9ydFNjYW5uaW5nIjpmYWxzZSwiaW5pdExpc3RlbmVyS2V5IjoicmVxXzEifQ==:1
+[   11113ms] [WARNING] The resource https://vercel.com/_next/static/immutable/chunks/1_k83kgmsyzle.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://vercel.com/login?next=%2Fsso-api%3Furl%3Dhttps%253A%252F%252Fhodos-creative-studio-8cqqor1s8-donisyafar10-1969.vercel.app%252Fadmin%26nonce%3Da1b1db848fe84679c7b18728b9f5899e4c2d9d3662afb59fdc759c027759f1dd:1
+[   11113ms] [WARNING] The resource https://vercel.com/_next/static/immutable/media/GeistPixel_Square.p.3i-voztpvqxl2.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://vercel.com/login?next=%2Fsso-api%3Furl%3Dhttps%253A%252F%252Fhodos-creative-studio-8cqqor1s8-donisyafar10-1969.vercel.app%252Fadmin%26nonce%3Da1b1db848fe84679c7b18728b9f5899e4c2d9d3662afb59fdc759c027759f1dd:1
+[   11113ms] [WARNING] The resource https://vercel.com/_next/static/immutable/chunks/2jvor9ashrjaa.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://vercel.com/login?next=%2Fsso-api%3Furl%3Dhttps%253A%252F%252Fhodos-creative-studio-8cqqor1s8-donisyafar10-1969.vercel.app%252Fadmin%26nonce%3Da1b1db848fe84679c7b18728b9f5899e4c2d9d3662afb59fdc759c027759f1dd:1

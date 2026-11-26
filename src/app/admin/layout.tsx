@@ -3,6 +3,7 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { requireRole, getUserRole } from '@/lib/auth'
 import { ActiveLink } from '@/components/layout/active-link'
+import AdminLogoutButton from '@/components/layout/admin-logout-button'
 
 export default async function AdminLayout({
   children,
@@ -57,18 +58,7 @@ export default async function AdminLayout({
               >
                 H
               </Link>
-              <a
-                href="/login"
-                className="font-[var(--font-inter-tight)] text-[13px] font-bold tracking-[0.02em] uppercase px-4 py-2 bg-helix-fg text-helix-bg rounded hover:bg-helix-fg/90 transition-colors"
-                onClick={(e) => {
-                  e.preventDefault()
-                  fetch('/api/auth/logout', { method: 'POST' }).then(() => {
-                    window.location.href = '/login'
-                  })
-                }}
-              >
-                Logout
-              </a>
+              <AdminLogoutButton />
             </div>
           </div>
         </div>
