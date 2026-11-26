@@ -34,16 +34,16 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  const { heatLaneId, waktu } = body
+  const { laneId, waktu_prestasi } = body
 
-  if (!heatLaneId || waktu === undefined) {
-    return NextResponse.json({ error: 'Heat lane ID dan waktu wajib diisi' }, { status: 400 })
+  if (!laneId || waktu_prestasi === undefined) {
+    return NextResponse.json({ error: 'Lane ID dan waktu wajib diisi' }, { status: 400 })
   }
 
   const { error } = await supabase
     .from('heat_lanes')
-    .update({ waktu_prestasi: waktu })
-    .eq('id', heatLaneId)
+    .update({ waktu_prestasi })
+    .eq('id', laneId)
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })

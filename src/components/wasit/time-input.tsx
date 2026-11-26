@@ -1,8 +1,29 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
+import { useState } from 'react'
+import { cn } from '@/lib/utils'
+
+interface Participant {
+  id: string
+  nama: string
+  team_id: string | null
+  teams?: { nama: string } | null
+}
+
+interface Lane {
+  id: string
+  heat_id: string
+  nomor_lintasan: number
+  participant_id: string | null
+  waktu_prestasi: string | null
+  participant: Participant | null
+}
+
+interface Heat {
+  id: string
+  nomor_heat: number
+  lanes: Lane[]
+}
 
 interface Category {
   id: string
@@ -10,220 +31,148 @@ interface Category {
   gaya: string
   jenis_kelamin: string
   sesi: string
-  events: { nama: string }
 }
 
-interface HeatLane {
-  id: string
-  nomor_lintasan: number
-  participants: {
-    id: string
-    nama: string
-  } | null
-  waktu_prestasi: string | null
-}
-
-interface Heat {
-  id: string
-  nomor_heat: number
-  heat_lanes: HeatLane[]
-}
-
-type TimeStatus = '' | 'DNF' | 'DNS' | 'DQ'
-
-function isValidTimeInput(value: string): boolean {
-  if (!value) return true
-  const upper = value.toUpperCase()
-  if (upper === 'DNF' || upper === 'DNS' || upper === 'DQ') return true
-  // Format: angka, koma, titik (e.g. 16,10 or 1,16,10)
-  return /^[\d.,:]+$/.test(value)
-}
-
-export default function WasitTimeInput({
-  category,
-  heats,
-}: {
+interface WasitTimeInputProps {
+  eventId: string
+  categoryId: string
   category: Category
   heats: Heat[]
-}) {
-  const router = useRouter()
-  const [inputs, setInputs] = useState<Record<string, string>>({})
-  const [saving, setSaving] = useState<Set<string>>(new Set())
-  const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+}
 
-  useEffect(() => {
-    if (status) {
-      const timer = setTimeout(() => setStatus(null), 3000)
-      return () => clearTimeout(timer)
-    }
-  }, [status])
+export default function WasitTimeInput({ eventId, categoryId, category, heats }: WasitTimeInputProps) {
+  const [saving, setSaving] = useState<string | null>(null)
+  const [saved, setSaved] = useState<string | null>(null)
+  const [times, setTimes] = useState<Record<string, string>>({})
 
-  const handleChange = (laneId: string, value: string) => {
-    if (!isValidTimeInput(value)) return
-    setInputs((prev) => ({ ...prev, [laneId]: value.toUpperCase() }))
+  const handleTimeChange = (laneId: string, value: string) => {
+    setTimes((prev) => ({ ...prev, [laneId]: value }))
   }
 
-  const handleQuickSet = (laneId: string, statusVal: TimeStatus) => {
-    setInputs((prev) => ({ ...prev, [laneId]: statusVal }))
-  }
-
-  const handleSave = async (laneId: string, value: string) => {
-    const savingSet = Array.from(saving)
-    savingSet.push(laneId)
-    setSaving(new Set(savingSet))
-    setStatus(null)
-
+  const handleSave = async (laneId: string, waktu: string) => {
+    setSaving(laneId)
     try {
-      const res = await fetch('/api/wasit/result', {
+      const res = await fetch(`/api/wasit/result`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ heatLaneId: laneId, waktu: value }),
+        body: JSON.stringify({
+          eventId,
+          categoryId,
+          laneId,
+          waktu_prestasi: waktu,
+        }),
       })
-
       if (res.ok) {
-        setStatus({ message: 'Waktu tersimpan', type: 'success' })
-      } else {
-        const err = await res.json()
-        setStatus({ message: err.error ?? 'Gagal menyimpan', type: 'error' })
+        setSaved(laneId)
+        setTimeout(() => setSaved(null), 2000)
       }
-    } catch {
-      setStatus({ message: 'Terjadi kesalahan jaringan', type: 'error' })
+    } catch (e) {
+      console.error(e)
     } finally {
-      setSaving((prev) => {
-        const next = new Set(prev)
-        next.delete(laneId)
-        return next
-      })
+      setSaving(null)
     }
   }
 
-  const handleBlur = (laneId: string) => {
-    const value = inputs[laneId]
-    if (value && value.trim()) {
-      handleSave(laneId, value)
-    }
+  const formatTime = (waktu: string | null) => {
+    if (!waktu) return ''
+    // Format MM:SS:cc -> MM,SS,cc untuk display
+    return waktu.replace(/:/g, ',')
+  }
+
+  const parseTime = (waktu: string) => {
+    // Parse MM,SS,cc -> MM:SS:cc untuk save
+    return waktu.replace(/,/g, ':')
+  }
+
+  if (heats.length === 0) {
+    return (
+      <div className="border border-border rounded-lg p-12 text-center text-muted-foreground">
+        Belum ada heat untuk kategori ini.
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-anton text-3xl mb-1 uppercase">
-            Input Waktu Wasit
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Acara {category.nomor_acara}: {category.gaya} {category.jenis_kelamin} ({category.sesi})
-          </p>
-        </div>
-        <Button onClick={() => router.back()} variant="outline">
-          Kembali
-        </Button>
-      </div>
-
-      {status && (
-        <div
-          className={`p-3 rounded text-sm font-medium ${
-            status.type === 'success'
-              ? 'bg-green-100 text-green-800 border border-green-200'
-              : 'bg-red-100 text-red-800 border border-red-200'
-          }`}
-        >
-          {status.message}
-        </div>
-      )}
-
-      {heats.length === 0 ? (
-        <div className="border border-border rounded-lg p-8 text-center">
-          <p className="text-muted-foreground">Belum ada heat yang diatur untuk kategori ini.</p>
-          <p className="text-xs text-muted-foreground mt-2">
-            Silakan atur heat & lintasan melalui admin panel terlebih dahulu.
-          </p>
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-muted text-muted-foreground sticky top-0 z-10">
-                <th className="p-3 border border-border text-sm font-semibold w-20">Lintasan</th>
-                <th className="p-3 border border-border text-sm font-semibold">Atlet</th>
-                <th className="p-3 border border-border text-sm font-semibold">Tim</th>
-                <th className="p-3 border border-border text-sm font-semibold text-center">Waktu Akhir</th>
-                <th className="p-3 border border-border text-sm font-semibold text-center">Cepat Set</th>
-              </tr>
-            </thead>
-            <tbody>
-              {heats.flatMap((heat) =>
-                heat.heat_lanes.map((lane) => (
-                  <tr key={lane.id} className="border-b border-border hover:bg-muted/50">
-                    <td className="p-3 border-r border-border font-mono text-sm font-medium">
-                      L{lane.nomor_lintasan}
+    <div className="space-y-8">
+      {heats.map((heat) => (
+        <section key={heat.id} className="border border-border rounded-lg overflow-hidden">
+          <div className="bg-muted px-4 py-3 border-b border-border flex items-center justify-between">
+            <h2 className="font-anton text-xl uppercase">Seri {heat.nomor_heat}</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-muted/50 text-muted-foreground">
+                  <th className="p-3 border border-border text-sm font-semibold w-16">Lintasan</th>
+                  <th className="p-3 border border-border text-sm font-semibold">Nama Atlet</th>
+                  <th className="p-3 border border-border text-sm font-semibold w-48">Tim</th>
+                  <th className="p-3 border border-border text-sm font-semibold w-40">Waktu (MM,SS,cc)</th>
+                  <th className="p-3 border border-border text-sm font-semibold w-32">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {heat.lanes.map((lane) => (
+                  <tr key={lane.id} className="hover:bg-muted/50">
+                    <td className="p-3 border border-border font-medium text-center">
+                      {lane.nomor_lintasan}
                     </td>
-                    <td className="p-3 border-r border-border">
-                      {lane.participants?.nama ?? 'Kosong'}
-                    </td>
-                    <td className="p-3 text-sm text-muted-foreground">
-                      {'-'}
-                    </td>
-                    <td className="p-3 text-center">
-                      <input
-                        type="text"
-                        value={inputs[lane.id] ?? lane.waktu_prestasi ?? ''}
-                        onChange={(e) => handleChange(lane.id, e.target.value)}
-                        onBlur={() => handleBlur(lane.id)}
-                        placeholder="99,99,99"
-                        className="w-full text-center text-sm border-b border-helix-bg focus:border-helix-bg focus:outline-none transition-colors"
-                        inputMode="text"
-                        spellCheck={false}
-                        disabled={saving.has(lane.id)}
-                      />
-                      {saving.has(lane.id) && (
-                        <span className="text-xs text-muted-foreground block mt-1">Menyimpan...</span>
+                    <td className="p-3 border border-border">
+                      {lane.participant ? (
+                        <span className="font-medium">{lane.participant.nama}</span>
+                      ) : (
+                        <span className="text-muted-foreground italic">— Kosong —</span>
                       )}
                     </td>
-                    <td className="p-3 text-center">
-                      <div className="flex gap-1 justify-center">
-                        <Button
-                          size="sm"
-                          variant="outline"
+                    <td className="p-3 border border-border text-sm text-muted-foreground">
+                      {lane.participant?.teams?.nama ?? '-'}
+                    </td>
+                    <td className="p-3 border border-border">
+                      <input
+                        type="text"
+                        value={times[lane.id] ?? formatTime(lane.waktu_prestasi)}
+                        onChange={(e) => handleTimeChange(lane.id, e.target.value)}
+                        placeholder="MM,SS,cc"
+                        disabled={!lane.participant || saving === lane.id}
+                        className={cn(
+                          'w-full px-3 py-2 bg-background border border-input rounded text-sm font-mono text-center focus:outline-none focus:ring-2 focus:ring-ring',
+                          !lane.participant && 'opacity-50 cursor-not-allowed'
+                        )}
+                      />
+                    </td>
+                    <td className="p-3 border border-border">
+                      {lane.participant && (
+                        <button
                           onClick={() => {
-                            handleQuickSet(lane.id, 'DNF')
-                            handleSave(lane.id, 'DNF')
+                            const waktu = times[lane.id] ?? formatTime(lane.waktu_prestasi)
+                            if (waktu) handleSave(lane.id, parseTime(waktu))
                           }}
-                          disabled={saving.has(lane.id)}
+                          disabled={saving === lane.id || !times[lane.id] && !lane.waktu_prestasi}
+                          className={cn(
+                            'px-3 py-1 text-xs rounded transition-colors w-full',
+                            saving === lane.id
+                              ? 'bg-yellow-100 text-yellow-800 cursor-wait'
+                              : saved === lane.id
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-helix-bg text-helix-fg hover:bg-helix-bg/90'
+                          )}
                         >
-                          DNF
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            handleQuickSet(lane.id, 'DNS')
-                            handleSave(lane.id, 'DNS')
-                          }}
-                          disabled={saving.has(lane.id)}
-                        >
-                          DNS
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            handleQuickSet(lane.id, 'DQ')
-                            handleSave(lane.id, 'DQ')
-                          }}
-                          disabled={saving.has(lane.id)}
-                        >
-                          DQ
-                        </Button>
-                      </div>
+                          {saving === lane.id
+                            ? 'Menyimpan...'
+                            : saved === lane.id
+                            ? 'Tersimpan ✓'
+                            : lane.waktu_prestasi
+                            ? 'Update'
+                            : 'Simpan'}
+                        </button>
+                      )}
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ))}
     </div>
   )
 }
