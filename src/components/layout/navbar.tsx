@@ -2,17 +2,50 @@
 
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
+
+export type NavbarLinkProps = {
+  href: string
+  label: string
+  isActive?: boolean
+}
+
+function NavbarLink({ href, label, isActive }: NavbarLinkProps) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        'font-[var(--font-inter-tight)] text-[13px] font-bold tracking-[0.02em] uppercase px-3 py-2',
+        isActive ? 'bg-helix-fg/10 text-helix-fg' : 'text-helix-fg/80 hover:bg-helix-fg/10'
+      )}
+    >
+      {label}
+    </Link>
+  )
+}
 
 export default function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  const handleLogout = () => {
-    router.push('/login')
+  async function loadAuth() {
+    const res = await fetch('/api/auth/status')
+    const json = await res.json()
+    setIsLoggedIn(!!json.isLoggedIn)
   }
 
+  useEffect(() => {
+    loadAuth()
+  }, [])
+
   const isActive = (route: string) => pathname === route || pathname.startsWith(`${route}/`)
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    router.push('/login')
+  }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-helix-bg text-helix-fg border-b border-helix-fg/30">
@@ -25,25 +58,10 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center gap-8">
-            <div className="flex items-center gap-2 font-[var(--font-inter-tight)] text-[13px] font-bold tracking-[0.02em] uppercase">
-              <Link
-                href="/events"
-                className={cn('px-3 py-2', isActive('/events') ? 'bg-helix-fg/10' : '')}
-              >
-                Events
-              </Link>
-              <Link
-                href="/registrasi"
-                className={cn('px-3 py-2', isActive('/registrasi') ? 'bg-helix-fg/10' : '')}
-              >
-                Registrasi
-              </Link>
-              <Link
-                href="/ranking"
-                className={cn('px-3 py-2', isActive('/ranking') ? 'bg-helix-fg/10' : '')}
-              >
-                Ranking
-              </Link>
+            <div className="flex items-center gap-2">
+              <NavbarLink href="/events" label="Events" isActive={isActive('/events')} />
+              <NavbarLink href="/registrasi" label="Registrasi" isActive={isActive('/registrasi')} />
+              <NavbarLink href="/ranking" label="Ranking" isActive={isActive('/ranking')} />
             </div>
           </div>
 
@@ -52,7 +70,7 @@ export default function Navbar() {
               onClick={handleLogout}
               className="font-[var(--font-inter-tight)] text-[13px] font-bold tracking-[0.02em] uppercase px-4 py-2 bg-helix-fg text-helix-bg rounded hover:bg-helix-fg/90 transition-colors"
             >
-              Login
+              {isLoggedIn ? 'Logout' : 'Login'}
             </button>
           </div>
         </div>

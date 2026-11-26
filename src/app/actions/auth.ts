@@ -8,3 +8,9 @@ export async function signOut() {
   await supabase.auth.signOut()
   redirect('/login')
 }
+
+export async function getAuthStatus() {
+  const supabase = createServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  return { isLoggedIn: !!user }
+}
