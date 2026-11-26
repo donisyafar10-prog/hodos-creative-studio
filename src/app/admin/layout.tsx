@@ -83,7 +83,7 @@ export default async function AdminLayout({
                   {item.label}
                 </ActiveLink>
               ))}
-              {isSuperAdmin && (
+              {role === 'super_admin' || role === 'admin' ? (
                 <>
                   <div className="px-3 py-1 text-[10px] font-bold tracking-widest uppercase text-helix-fg/40 mb-2">
                     Akun
@@ -99,7 +99,7 @@ export default async function AdminLayout({
                     </ActiveLink>
                   ))}
                 </>
-              )}
+              ) : null}
             </nav>
             <div className="p-4 border-t border-helix-fg/30">
               <p className="text-xs opacity-50">Hodos Creative Studio</p>

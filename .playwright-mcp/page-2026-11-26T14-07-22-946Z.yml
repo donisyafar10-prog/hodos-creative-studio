@@ -1,0 +1,8 @@
+- generic [active] [ref=f10e1]:
+  - generic [ref=f10e3]:
+    - heading "404" [level=1] [ref=f10e4]
+    - heading "This page could not be found." [level=2] [ref=f10e6]
+  - region "Notifications (F8)":
+    - list
+  - region "Notifications alt+T"
+  - alert [ref=f10e7]
