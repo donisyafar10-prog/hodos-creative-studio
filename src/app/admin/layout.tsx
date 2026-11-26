@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { requireRole } from '@/lib/auth'
+import { ActiveLink } from '@/components/layout/active-link'
 
 export default async function AdminLayout({
   children,
@@ -9,7 +9,6 @@ export default async function AdminLayout({
   children: React.ReactNode
 }) {
   await requireRole(['super_admin', 'admin'])
-  const pathname = usePathname()
 
   const navItems = [
     { href: '/admin', label: 'Dashboard' },
@@ -28,18 +27,14 @@ export default async function AdminLayout({
             </div>
             <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
               {navItems.map((item) => (
-                <Link
+                <ActiveLink
                   key={item.href}
                   href={item.href}
-                  className={cn(
-                    'px-3 py-2 rounded text-sm font-medium transition-colors',
-                    pathname === item.href
-                      ? 'bg-helix-fg/20 text-helix-fg'
-                      : 'text-helix-fg/70 hover:bg-helix-fg/10'
-                  )}
+                  className="px-3 py-2 rounded text-sm font-medium transition-colors text-helix-fg/70 hover:bg-helix-fg/10"
+                  activeClassName="bg-helix-fg/20 text-helix-fg"
                 >
                   {item.label}
-                </Link>
+                </ActiveLink>
               ))}
             </nav>
             <div className="p-4 border-t border-helix-fg/30">

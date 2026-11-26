@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { requireRole } from '@/lib/auth'
+import { ActiveLink } from '@/components/layout/active-link'
 
 export default async function WasitLayout({
   children,
@@ -9,7 +9,6 @@ export default async function WasitLayout({
   children: React.ReactNode
 }) {
   await requireRole(['super_admin', 'admin', 'wasit'])
-  const pathname = usePathname()
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -20,15 +19,16 @@ export default async function WasitLayout({
               Hodos Creative Studio
             </Link>
             <div className="flex items-center gap-4">
-              <Link
+              <ActiveLink
                 href="/wasit"
                 className={cn(
                   'px-3 py-2 text-sm font-medium transition-colors',
-                  pathname === '/wasit' ? 'bg-helix-fg/10' : 'hover:bg-helix-fg/10'
+                  'text-helix-fg/70 hover:bg-helix-fg/10'
                 )}
+                activeClassName="bg-helix-fg/10 text-helix-fg"
               >
                 Dashboard
-              </Link>
+              </ActiveLink>
               <Link
                 href="/login"
                 className="px-4 py-2 text-xs font-bold tracking-widest uppercase bg-helix-fg text-helix-bg rounded hover:bg-helix-fg/90 transition-colors"

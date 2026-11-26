@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-export default function NewParticipantPage() {
+function NewParticipantPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const eventId = searchParams.get('eventId')
@@ -101,5 +101,13 @@ export default function NewParticipantPage() {
         </div>
       </form>
     </div>
+  )
+}
+
+export default function NewParticipantPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-muted-foreground">Memuat...</div>}>
+      <NewParticipantPageContent />
+    </Suspense>
   )
 }

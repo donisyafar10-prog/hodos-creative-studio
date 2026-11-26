@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-export default function NewTeamPage() {
+function NewTeamPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const eventId = searchParams.get('eventId')
@@ -80,5 +80,13 @@ export default function NewTeamPage() {
         </div>
       </form>
     </div>
+  )
+}
+
+export default function NewTeamPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-muted-foreground">Memuat...</div>}>
+      <NewTeamPageContent />
+    </Suspense>
   )
 }
