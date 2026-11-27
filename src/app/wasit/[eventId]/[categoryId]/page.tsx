@@ -89,7 +89,7 @@ export default async function WasitCategoryPage({
             </p>
           </div>
           <a
-            href={`/download/buku-hasil/${event.id}`}
+            href={`/api/download/buku-hasil/${event.id}`}
             className="px-4 py-2 bg-helix-bg text-helix-fg rounded hover:bg-helix-bg/90 text-sm font-bold tracking-[0.02em] uppercase"
           >
             Unduh Buku Hasil
