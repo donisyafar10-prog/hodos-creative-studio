@@ -30,9 +30,15 @@ export default function AdminAkunPage() {
   const [myRole, setMyRole] = useState<string>('')
 
   const loadProfiles = async () => {
-    const res = await listUserAccounts()
-    setProfiles(res.profiles ?? [])
-    setLoading(false)
+    setLoading(true)
+    try {
+      const res = await listUserAccounts()
+      setProfiles(res.profiles ?? [])
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Gagal memuat daftar akun.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
