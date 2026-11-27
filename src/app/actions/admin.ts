@@ -1,10 +1,27 @@
 'use server'
 
-import { createAdminClient } from '@/lib/supabase/admin'
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 const ALLOWED_ROLES = ['super_admin', 'admin', 'official', 'wasit'] as const
 
 type Role = (typeof ALLOWED_ROLES)[number]
+
+async function supabaseRequest(path: string, init?: RequestInit) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...init,
+    headers: {
+      apikey: SERVICE_ROLE_KEY,
+      Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
+      ...(init?.headers || {}),
+    },
+  })
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    throw new Error(`Supabase ${res.status}: ${body || res.statusText}`)
+  }
+  return res.json()
+}
 
 export async function createUserAccount(formData: FormData) {
   const email = formData.get('email') as string
@@ -16,52 +33,40 @@ export async function createUserAccount(formData: FormData) {
     return { error: 'Data tidak lengkap atau role tidak valid.' }
   }
 
-  const supabase = createAdminClient()
-
-  // Buat user di Supabase Auth
-  const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-    email,
-    password,
-    email_confirm: true,
+  // 1. Buat user di Supabase Auth via admin API
+  const authRes = await supabaseRequest('auth/admin/users', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, email_confirm: true }),
   })
 
-  if (authError || !authData.user) {
-    return { error: authError?.message || 'Gagal membuat akun.' }
+  if (authRes.error) {
+    return { error: authRes.error?.message || 'Gagal membuat akun.' }
   }
 
-  // Buat profil user
-  const { error: profileError } = await supabase.from('profiles').insert({
-    id: authData.user.id,
-    email,
-    nama,
-    role,
+  const userId = authRes.id
+
+  // 2. Buat profil user
+  await supabaseRequest('profiles', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: userId, email, nama, role }),
   })
-
-  if (profileError) {
-    return { error: profileError.message }
-  }
 
   return { success: true }
 }
 
 export async function listUserAccounts() {
-  const supabase = createAdminClient()
-
-  const { data: profiles } = await supabase
-    .from('profiles')
-    .select('id, email, nama, role, created_at')
-    .order('created_at', { ascending: false })
+  const profiles = await supabaseRequest(
+    'profiles?select=id,email,nama,role,created_at&order=created_at.desc'
+  )
 
   return { profiles: profiles ?? [] }
 }
 
 export async function deleteUserAccount(userId: string) {
-  const supabase = createAdminClient()
-
-  const { error } = await supabase.auth.admin.deleteUser(userId)
-  if (error) {
-    return { error: error.message }
-  }
+  // Hapus user di Supabase Auth
+  await supabaseRequest(`auth/admin/users/${userId}`, { method: 'DELETE' })
 
   return { success: true }
 }

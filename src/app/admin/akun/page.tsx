@@ -67,12 +67,12 @@ export default function AdminAkunPage() {
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Yakin ingin menghapus akun ini?')) return
-    const res = await deleteUserAccount(id)
-    if (res.error) {
-      setError(res.error)
-    } else {
+    try {
+      await deleteUserAccount(id)
       setSuccess('Akun berhasil dihapus.')
       await loadProfiles()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Gagal menghapus akun.')
     }
   }
 
