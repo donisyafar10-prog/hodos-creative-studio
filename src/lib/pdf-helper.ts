@@ -1,4 +1,4 @@
-import PDFDocument from 'pdfkit'
+import { jsPDF } from 'jspdf'
 
 export type DownloadRole = 'super_admin' | 'admin' | 'official' | 'wasit' | null
 
@@ -14,10 +14,26 @@ export function formatWaktu(seconds: number | null): string {
   const mm = Math.floor(totalMs / 600000)
   const ss = Math.floor((totalMs % 600000) / 1000)
   const cc = totalMs % 1000
-  const mmStr = String(mm).padStart(2, '0')
-  const ssStr = String(ss).padStart(2, '0')
-  const ccStr = String(cc).padStart(2, '0')
-  return `${mmStr},${ssStr},${ccStr}`
+  return `${String(mm).padStart(2, '0')},${String(ss).padStart(2, '0')},${String(cc).padStart(2, '0')}`
+}
+
+function mmToPt(mm: number): number {
+  return (mm / 25.4) * 72
+}
+
+function drawTableRow(
+  doc: jsPDF,
+  startX: number,
+  y: number,
+  values: { text: string; width: number; align?: 'left' | 'center' }[]
+) {
+  let x = startX
+  doc.setFontSize(8)
+  for (const v of values) {
+    const align = v.align ?? 'left'
+    doc.text(v.text, x, y, { align: align as any, maxWidth: v.width })
+    x += v.width
+  }
 }
 
 export function makeBukuHasilPdf({
@@ -62,207 +78,253 @@ export function makeBukuHasilPdf({
   bestSwimmerPutra: Array<{ nama: string; teamNama: string; emas: number; perak: number; perunggu: number; total: number }>
   bestSwimmerPutri: Array<{ nama: string; teamNama: string; emas: number; perak: number; perunggu: number; total: number }>
 }): Buffer {
-  const doc = new PDFDocument({ size: 'A4', margin: 50 })
-  const chunks: Buffer[] = []
-  doc.on('data', (c: Buffer) => chunks.push(c))
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+  const startX = 15
+  const pageWidth = 210 - 15 - 15 // content width
 
-  const teamsMap = new Map(teams.map((t) => [t.id, t.nama]))
+  const tableHeaders = ['Pos', 'Lintasan', 'Nama Atlet', 'Ket', 'Lahir', 'Group', 'Nama Tim', 'Prestasi', 'Penyisihan', 'Akhir', 'HASIL GABUNGAN']
+  const colWidths = [12, 15, 40, 15, 12, 12, 35, 20, 20, 15, 25]
 
   // ===== Title =====
-  doc.font('Helvetica-Bold').fontSize(20).fillColor('#f2140c')
-  doc.text('BUKU HASIL', { align: 'center' })
-  doc.moveDown(0.5)
-  doc.font('Helvetica').fontSize(12).fillColor('#000')
-  doc.text(event.nama.toUpperCase(), { align: 'center' })
-  doc.moveDown(0.5)
-  const tgl = event.tanggal ? new Date(event.tanggal).toLocaleDateString('id-ID') : '-'
-  doc.text(`${tgl} | ${event.lokasi || '-'}`, { align: 'center' })
-  doc.moveDown(1.5)
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(16)
+  doc.setTextColor(242, 20, 12) // helix red
+  doc.text('BUKU HASIL', 105, 20, { align: 'center' })
 
-  // Table header helper
-  const tableHeaders = ['Pos', 'Lintasan', 'Nama Atlet', 'Ket', 'Lahir', 'Group', 'Nama Tim', 'Prestasi', 'Penyisihan', 'Akhir', 'HASIL GABUNGAN']
-  const colWidths = [35, 50, 110, 50, 40, 40, 90, 60, 60, 50, 80]
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(11)
+  doc.setTextColor(0, 0, 0)
+  doc.text(event.nama.toUpperCase(), 105, 30, { align: 'center' })
+
+  doc.setFontSize(9)
+  const tgl = event.tanggal ? new Date(event.tanggal).toLocaleDateString('id-ID') : '-'
+  doc.text(`${tgl} | ${event.lokasi || '-'}`, 105, 38, { align: 'center' })
+
+  let y = 52
 
   for (const cat of categories) {
-    doc.font('Helvetica-Bold').fontSize(13)
-    doc.text(`Acara ${cat.nomor_acara}  ${cat.gaya} ${cat.jenis_kelamin.charAt(0).toUpperCase() + cat.jenis_kelamin.slice(1)}  AKHIR`, { continued: false })
-    doc.moveDown(0.3)
-    doc.font('Helvetica-Bold').fontSize(11)
-    doc.text(cat.sesi.charAt(0).toUpperCase() + cat.sesi.slice(1))
-    doc.moveDown(0.3)
+    // New page per category to keep layout clean
+    if (y > 250) {
+      doc.addPage()
+      y = 20
+    }
+
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(11)
+    doc.text(`Acara ${cat.nomor_acara}  ${cat.gaya} ${cat.jenis_kelamin.charAt(0).toUpperCase() + cat.jenis_kelamin.slice(1)}  AKHIR`, startX, y)
+    y += 6
+
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(10)
+    doc.text(cat.sesi.charAt(0).toUpperCase() + cat.sesi.slice(1), startX, y)
+    y += 5
 
     const recordRaw = records.get(`${cat.gaya} ${cat.jenis_kelamin}`)
     if (recordRaw) {
-      doc.font('Helvetica-Oblique').fontSize(9)
-      doc.text(`Record: ${recordRaw.waktu_rekor} (${recordRaw.atlet} - ${recordRaw.kejuaraan} ${recordRaw.tahun}, ${recordRaw.tempat})`)
-      doc.moveDown(0.3)
+      doc.setFont('helvetica', 'italic')
+      doc.setFontSize(8)
+      doc.text(`Record: ${recordRaw.waktu_rekor} (${recordRaw.atlet} - ${recordRaw.kejuaraan} ${recordRaw.tahun}, ${recordRaw.tempat})`, startX, y)
+      y += 5
     }
-    doc.moveDown(0.2)
+    y += 2
 
     // Header row
-    const startX = doc.page.margins.left
-    let y = doc.y
-    doc.font('Helvetica-Bold').fontSize(8)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(7)
+    doc.setTextColor(0, 0, 0)
+    let hx1 = startX
     tableHeaders.forEach((h, i) => {
-      doc.text(h, doc.page.margins.left + colWidths.slice(0, i).reduce((a, b) => a + b, 0), y, { width: colWidths[i], align: 'center' })
+      doc.text(h, hx1, y, { align: 'center' as const, maxWidth: colWidths[i] })
+      hx1 += colWidths[i]
     })
-    doc.moveDown(0.4)
+    y += 5
 
     const heats = heatsByCategory.get(cat.id) ?? []
-    const processed = processedResultsByCategory.get(cat.id) ?? []
 
     // Breakdown per Heat
     for (const heat of heats) {
-      doc.font('Helvetica-Bold').fontSize(9).fillColor('#f2140c')
-      doc.text(`SERI ${heat.nomor_heat}`)
-      doc.moveDown(0.3)
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(9)
+      doc.setTextColor(242, 20, 12)
+      doc.text(`SERI ${heat.nomor_heat}`, startX, y)
+      y += 5
 
       const heatLanes = (lanesByHeat.get(heat.id) ?? []).sort((a, b) => (a.nomor_lintasan ?? 0) - (b.nomor_lintasan ?? 0))
       for (const lane of heatLanes) {
         const p = lane.participant_id ? participantsById.get(lane.participant_id) : null
         if (!p) continue
 
-        const rowX = doc.page.margins.left
-        doc.font('Helvetica').fontSize(8)
-        doc.text('-', rowX, doc.y, { width: colWidths[0], align: 'center' })
-        doc.text(String(lane.nomor_lintasan), rowX + colWidths[0], doc.y, { width: colWidths[1], align: 'center' })
-        doc.text(p.nama, rowX + colWidths[0] + colWidths[1], doc.y, { width: colWidths[2] })
-        doc.text('-', rowX + colWidths[0] + colWidths[1] + colWidths[2], doc.y, { width: colWidths[3], align: 'center' })
-        doc.text(String(p.tahun_lahir ?? '-'), rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3], doc.y, { width: colWidths[4], align: 'center' })
-        doc.text('-', rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4], doc.y, { width: colWidths[5], align: 'center' })
-        doc.text(p.team_nama ?? '-', rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4] + colWidths[5], doc.y, { width: colWidths[6] })
-        doc.text(lane.waktu_prestasi ?? '-', rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4] + colWidths[5] + colWidths[6], doc.y, { width: colWidths[7], align: 'center' })
-        doc.text('-', rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4] + colWidths[5] + colWidths[6] + colWidths[7], doc.y, { width: colWidths[8], align: 'center' })
-        doc.text('-', rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4] + colWidths[5] + colWidths[6] + colWidths[7] + colWidths[8], doc.y, { width: colWidths[9], align: 'center' })
-        doc.text('-', rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4] + colWidths[5] + colWidths[6] + colWidths[7] + colWidths[8] + colWidths[9], doc.y, { width: colWidths[10], align: 'center' })
-        doc.moveDown(0.25)
+        const rowVals = [
+          { text: '-', width: colWidths[0], align: 'center' as const },
+          { text: String(lane.nomor_lintasan), width: colWidths[1], align: 'center' as const },
+          { text: p.nama, width: colWidths[2] },
+          { text: '-', width: colWidths[3], align: 'center' as const },
+          { text: String(p.tahun_lahir ?? '-'), width: colWidths[4], align: 'center' as const },
+          { text: '-', width: colWidths[5], align: 'center' as const },
+          { text: p.team_nama ?? '-', width: colWidths[6] },
+          { text: lane.waktu_prestasi ?? '-', width: colWidths[7], align: 'center' as const },
+          { text: '-', width: colWidths[8], align: 'center' as const },
+          { text: '-', width: colWidths[9], align: 'center' as const },
+          { text: '-', width: colWidths[10], align: 'center' as const },
+        ]
+        drawTableRow(doc, startX, y, rowVals)
+        y += 4.5
       }
-      doc.moveDown(0.3)
+      y += 3
     }
 
     // HASIL GABUNGAN
-    doc.font('Helvetica-Bold').fontSize(10).fillColor('#000')
-    doc.text('HASIL GABUNGAN')
-    doc.moveDown(0.3)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(9)
+    doc.setTextColor(0, 0, 0)
+    doc.text('HASIL GABUNGAN', startX, y)
+    y += 5
 
     // Header again
-    let hx = doc.page.margins.left
+    let hx2 = startX
     tableHeaders.forEach((h, i) => {
-      doc.text(h, hx, doc.y, { width: colWidths[i], align: 'center' })
-      hx += colWidths[i]
+      doc.text(h, hx2, y, { align: 'center' as const, maxWidth: colWidths[i] })
+      hx2 += colWidths[i]
     })
-    doc.moveDown(0.3)
+    y += 5
 
+    const processed = processedResultsByCategory.get(cat.id) ?? []
     if (processed.length > 0) {
       for (const r of processed) {
         const p = participantsById.get(r.participantId)
         const rekorTag = r.rekorFlag ? ' (R. Sultra)' : ''
         const ket = r.ket ? `${r.ket}${rekorTag}` : (rekorTag ? 'R. Sultra' : '-')
 
-        const rowX = doc.page.margins.left
-        doc.font('Helvetica').fontSize(8)
-        doc.text(String(r.posisi ?? '-'), rowX, doc.y, { width: colWidths[0], align: 'center' })
-        doc.text(String(r.lane ?? '-'), rowX + colWidths[0], doc.y, { width: colWidths[1], align: 'center' })
-        doc.text(r.nama, rowX + colWidths[0] + colWidths[1], doc.y, { width: colWidths[2] })
-        doc.text(ket, rowX + colWidths[0] + colWidths[1] + colWidths[2], doc.y, { width: colWidths[3] })
-        doc.text(String(p?.tahun_lahir ?? '-'), rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3], doc.y, { width: colWidths[4], align: 'center' })
-        doc.text('-', rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4], doc.y, { width: colWidths[5], align: 'center' })
-        doc.text(r.teamNama ?? '-', rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4] + colWidths[5], doc.y, { width: colWidths[6] })
-        doc.text(r.waktuAkhir ?? '-', rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4] + colWidths[5] + colWidths[6], doc.y, { width: colWidths[7], align: 'center' })
-        doc.text('-', rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4] + colWidths[5] + colWidths[6] + colWidths[7], doc.y, { width: colWidths[8], align: 'center' })
-        doc.text(r.waktuAkhir ?? '-', rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4] + colWidths[5] + colWidths[6] + colWidths[7] + colWidths[8], doc.y, { width: colWidths[9], align: 'center' })
-        doc.text(String(r.posisi ?? '-'), rowX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4] + colWidths[5] + colWidths[6] + colWidths[7] + colWidths[8] + colWidths[9], doc.y, { width: colWidths[10], align: 'center' })
-        doc.moveDown(0.25)
+        const rowVals = [
+          { text: String(r.posisi ?? '-'), width: colWidths[0], align: 'center' as const },
+          { text: String(r.lane ?? '-'), width: colWidths[1], align: 'center' as const },
+          { text: r.nama, width: colWidths[2] },
+          { text: ket, width: colWidths[3] },
+          { text: String(p?.tahun_lahir ?? '-'), width: colWidths[4], align: 'center' as const },
+          { text: '-', width: colWidths[5], align: 'center' as const },
+          { text: r.teamNama ?? '-', width: colWidths[6] },
+          { text: r.waktuAkhir ?? '-', width: colWidths[7], align: 'center' as const },
+          { text: '-', width: colWidths[8], align: 'center' as const },
+          { text: r.waktuAkhir ?? '-', width: colWidths[9], align: 'center' as const },
+          { text: String(r.posisi ?? '-'), width: colWidths[10], align: 'center' as const },
+        ]
+        drawTableRow(doc, startX, y, rowVals)
+        y += 4.5
       }
     } else {
-      doc.font('Helvetica-Oblique').fontSize(9).fillColor('#666')
-      doc.text('Belum ada hasil.', { align: 'center' })
-      doc.moveDown(0.5)
+      doc.setFont('helvetica', 'italic')
+      doc.setFontSize(8)
+      doc.setTextColor(102, 102, 102)
+      doc.text('Belum ada hasil.', startX, y)
+      y += 6
     }
 
-    doc.moveDown(1)
-    doc.addPage()
+    y += 8
   }
 
-  // ===== Sheet 2: Rekap Medali =====
-  doc.font('Helvetica-Bold').fontSize(16).fillColor('#f2140c')
-  doc.text(`REKAP MEDALI — ${event.nama.toUpperCase()}`, { align: 'center' })
-  doc.moveDown(0.5)
+  // ===== Rekap Medali =====
+  doc.addPage()
+  y = 20
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(16)
+  doc.setTextColor(242, 20, 12)
+  doc.text(`REKAP MEDALI — ${event.nama.toUpperCase()}`, 105, y, { align: 'center' })
+  y += 10
 
-  doc.font('Helvetica-Bold').fontSize(9)
   const medalHeaders = ['Peringkat', 'Tim', 'Emas', 'Perak', 'Perunggu', 'Total']
-  const medalWidths = [70, 120, 50, 50, 60, 50]
-  let mx = doc.page.margins.left
+  const medalWidths = [20, 55, 15, 15, 20, 15]
+
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(8)
+  doc.setTextColor(0, 0, 0)
+  let mx = startX
   medalHeaders.forEach((h, i) => {
-    doc.text(h, mx, doc.y, { width: medalWidths[i], align: 'center' })
+    doc.text(h, mx, y, { align: 'center' as const, maxWidth: medalWidths[i] })
     mx += medalWidths[i]
   })
-  doc.moveDown(0.3)
+  y += 5
 
-  doc.font('Helvetica').fontSize(9)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8)
   if (teamMedals.length > 0) {
     teamMedals.forEach((tm, i) => {
-      const mrowX = doc.page.margins.left
-      doc.text(String(i + 1), mrowX, doc.y, { width: medalWidths[0], align: 'center' })
-      doc.text(tm.teamNama, mrowX + medalWidths[0], doc.y, { width: medalWidths[1] })
-      doc.text(String(tm.emas), mrowX + medalWidths[0] + medalWidths[1], doc.y, { width: medalWidths[2], align: 'center' })
-      doc.text(String(tm.perak), mrowX + medalWidths[0] + medalWidths[1] + medalWidths[2], doc.y, { width: medalWidths[3], align: 'center' })
-      doc.text(String(tm.perunggu), mrowX + medalWidths[0] + medalWidths[1] + medalWidths[2] + medalWidths[3], doc.y, { width: medalWidths[4], align: 'center' })
-      doc.text(String(tm.total), mrowX + medalWidths[0] + medalWidths[1] + medalWidths[2] + medalWidths[3] + medalWidths[4], doc.y, { width: medalWidths[5], align: 'center' })
-      doc.moveDown(0.25)
+      const rowVals = [
+        { text: String(i + 1), width: medalWidths[0], align: 'center' as const },
+        { text: tm.teamNama, width: medalWidths[1] },
+        { text: String(tm.emas), width: medalWidths[2], align: 'center' as const },
+        { text: String(tm.perak), width: medalWidths[3], align: 'center' as const },
+        { text: String(tm.perunggu), width: medalWidths[4], align: 'center' as const },
+        { text: String(tm.total), width: medalWidths[5], align: 'center' as const },
+      ]
+      drawTableRow(doc, startX, y, rowVals)
+      y += 4.5
     })
   } else {
-    doc.font('Helvetica-Oblique').fontSize(9).fillColor('#666')
-    doc.text('Belum ada data medali.', { align: 'center' })
-    doc.moveDown(0.5)
+    doc.setFont('helvetica', 'italic')
+    doc.setFontSize(8)
+    doc.setTextColor(102, 102, 102)
+    doc.text('Belum ada data medali.', startX, y)
+    y += 6
   }
 
+  // ===== Best Swimmer =====
   doc.addPage()
+  y = 20
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(16)
+  doc.setTextColor(242, 20, 12)
+  doc.text(`ATLET TERBAIK — ${event.nama.toUpperCase()}`, 105, y, { align: 'center' })
+  y += 10
 
-  // ===== Sheet 3: Best Swimmer =====
-  doc.font('Helvetica-Bold').fontSize(16).fillColor('#f2140c')
-  doc.text(`ATLET TERBAIK — ${event.nama.toUpperCase()}`, { align: 'center' })
-  doc.moveDown(0.5)
-
-  const bestWidths = [150, 120, 50, 50, 60, 50]
+  const bestWidths = [45, 40, 15, 15, 20, 15]
   const bestHeaders = ['Atlet', 'Tim', 'Emas', 'Perak', 'Perunggu', 'Total']
 
   const renderBestSection = (title: string, swimmers: Array<{ nama: string; teamNama: string; emas: number; perak: number; perunggu: number; total: number }>) => {
-    doc.font('Helvetica-Bold').fontSize(12).fillColor('#000')
-    doc.text(title)
-    doc.moveDown(0.3)
-    doc.font('Helvetica-Bold').fontSize(9)
-    let bx = doc.page.margins.left
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(11)
+    doc.setTextColor(0, 0, 0)
+    doc.text(title, startX, y)
+    y += 6
+
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(8)
+    let bx = startX
     bestHeaders.forEach((h, i) => {
-      doc.text(h, bx, doc.y, { width: bestWidths[i], align: 'center' })
+      doc.text(h, bx, y, { align: 'center' as const, maxWidth: bestWidths[i] })
       bx += bestWidths[i]
     })
-    doc.moveDown(0.3)
-    doc.font('Helvetica').fontSize(9)
+    y += 5
+
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(8)
     if (swimmers.length > 0) {
       swimmers.forEach((s) => {
-        const browX = doc.page.margins.left
-        doc.text(s.nama, browX, doc.y, { width: bestWidths[0] })
-        doc.text(s.teamNama, browX + bestWidths[0], doc.y, { width: bestWidths[1] })
-        doc.text(String(s.emas), browX + bestWidths[0] + bestWidths[1], doc.y, { width: bestWidths[2], align: 'center' })
-        doc.text(String(s.perak), browX + bestWidths[0] + bestWidths[1] + bestWidths[2], doc.y, { width: bestWidths[3], align: 'center' })
-        doc.text(String(s.perunggu), browX + bestWidths[0] + bestWidths[1] + bestWidths[2] + bestWidths[3], doc.y, { width: bestWidths[4], align: 'center' })
-        doc.text(String(s.total), browX + bestWidths[0] + bestWidths[1] + bestWidths[2] + bestWidths[3] + bestWidths[4], doc.y, { width: bestWidths[5], align: 'center' })
-        doc.moveDown(0.25)
+        const rowVals = [
+          { text: s.nama, width: bestWidths[0] },
+          { text: s.teamNama, width: bestWidths[1] },
+          { text: String(s.emas), width: bestWidths[2], align: 'center' as const },
+          { text: String(s.perak), width: bestWidths[3], align: 'center' as const },
+          { text: String(s.perunggu), width: bestWidths[4], align: 'center' as const },
+          { text: String(s.total), width: bestWidths[5], align: 'center' as const },
+        ]
+        drawTableRow(doc, startX, y, rowVals)
+        y += 4.5
       })
     } else {
-      doc.font('Helvetica-Oblique').fontSize(9).fillColor('#666')
-      doc.text('Belum ada data.', { align: 'center' })
-      doc.moveDown(0.5)
+      doc.setFont('helvetica', 'italic')
+      doc.setFontSize(8)
+      doc.setTextColor(102, 102, 102)
+      doc.text('Belum ada data.', startX, y)
+      y += 6
     }
-    doc.moveDown(0.8)
+    y += 8
   }
 
   renderBestSection('Putra', bestSwimmerPutra)
   renderBestSection('Putri', bestSwimmerPutri)
 
-  doc.end()
-  return Buffer.concat(chunks)
+  const arrayBuffer = doc.output('arraybuffer')
+  return Buffer.from(arrayBuffer)
 }
 
 export function makeBukuAcaraPdf({
@@ -276,65 +338,77 @@ export function makeBukuAcaraPdf({
   teams: Array<{ id: string; nama: string }>
   participantsByCategory: Map<string, Array<{ id: string; nama: string; team_nama: string | null }>>
 }): Buffer {
-  const doc = new PDFDocument({ size: 'A4', margin: 50 })
-  const chunks: Buffer[] = []
-  doc.on('data', (c: Buffer) => chunks.push(c))
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+  const startX = 15
 
-  const teamsMap = new Map(teams.map((t) => [t.id, t.nama]))
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(16)
+  doc.setTextColor(242, 20, 12)
+  doc.text('BUKU ACARA', 105, 20, { align: 'center' })
 
-  doc.font('Helvetica-Bold').fontSize(20).fillColor('#f2140c')
-  doc.text('BUKU ACARA', { align: 'center' })
-  doc.moveDown(0.5)
-  doc.font('Helvetica').fontSize(12).fillColor('#000')
-  doc.text(event.nama.toUpperCase(), { align: 'center' })
-  doc.moveDown(0.5)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(11)
+  doc.setTextColor(0, 0, 0)
+  doc.text(event.nama.toUpperCase(), 105, 30, { align: 'center' })
+
+  doc.setFontSize(9)
   const tgl = event.tanggal ? new Date(event.tanggal).toLocaleDateString('id-ID') : '-'
-  doc.text(`${tgl} | ${event.lokasi || '-'}`, { align: 'center' })
-  doc.moveDown(1.5)
+  doc.text(`${tgl} | ${event.lokasi || '-'}`, 105, 38, { align: 'center' })
+
+  let y = 52
 
   const headers = ['No Acara', 'Kategori', 'Jenis Kelamin', 'Sesi', 'Peserta', 'Tim']
-  const widths = [60, 120, 100, 60, 140, 120]
+  const widths = [22, 35, 28, 22, 42, 42]
 
   for (const cat of categories) {
-    doc.font('Helvetica-Bold').fontSize(12)
-    doc.text(`Acara ${cat.nomor_acara} — ${cat.gaya} ${cat.jenis_kelamin} (${cat.sesi})`)
-    doc.moveDown(0.3)
+    if (y > 250) {
+      doc.addPage()
+      y = 20
+    }
+
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(10)
+    doc.text(`Acara ${cat.nomor_acara} — ${cat.gaya} ${cat.jenis_kelamin} (${cat.sesi})`, startX, y)
+    y += 6
 
     // Header row
-    let hx = doc.page.margins.left
-    doc.font('Helvetica-Bold').fontSize(8)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(7)
+    doc.setTextColor(0, 0, 0)
+    let hx1 = startX
     headers.forEach((h, i) => {
-      doc.text(h, hx, doc.y, { width: widths[i], align: 'center' })
-      hx += widths[i]
+      doc.text(h, hx1, y, { align: 'center' as const, maxWidth: widths[i] })
+      hx1 += widths[i]
     })
-    doc.moveDown(0.3)
+    y += 5
 
     const participants = participantsByCategory.get(cat.id) ?? []
     if (participants.length === 0) {
-      doc.font('Helvetica-Oblique').fontSize(9).fillColor('#666')
-      doc.text('Belum ada peserta terdaftar.')
-      doc.moveDown(0.5)
+      doc.setFont('helvetica', 'italic')
+      doc.setFontSize(8)
+      doc.setTextColor(102, 102, 102)
+      doc.text('Belum ada peserta terdaftar.', startX, y)
+      y += 6
       continue
     }
 
-    doc.font('Helvetica').fontSize(8)
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(8)
     for (const p of participants) {
-      const rowX = doc.page.margins.left
-      doc.text(cat.nomor_acara, rowX, doc.y, { width: widths[0], align: 'center' })
-      doc.text(cat.gaya, rowX + widths[0], doc.y, { width: widths[1] })
-      doc.text(cat.jenis_kelamin, rowX + widths[0] + widths[1], doc.y, { width: widths[2], align: 'center' })
-      doc.text(cat.sesi, rowX + widths[0] + widths[1] + widths[2], doc.y, { width: widths[3], align: 'center' })
-      doc.text(p.nama, rowX + widths[0] + widths[1] + widths[2] + widths[3], doc.y, { width: widths[4] })
-      doc.text(p.team_nama ?? '-', rowX + widths[0] + widths[1] + widths[2] + widths[3] + widths[4], doc.y, { width: widths[5] })
-      doc.moveDown(0.25)
+      const rowVals = [
+        { text: cat.nomor_acara, width: widths[0], align: 'center' as const },
+        { text: cat.gaya, width: widths[1] },
+        { text: cat.jenis_kelamin, width: widths[2], align: 'center' as const },
+        { text: cat.sesi, width: widths[3], align: 'center' as const },
+        { text: p.nama, width: widths[4] },
+        { text: p.team_nama ?? '-', width: widths[5] },
+      ]
+      drawTableRow(doc, startX, y, rowVals)
+      y += 4.5
     }
-    doc.moveDown(0.5)
-
-    if (doc.y > 700) {
-      doc.addPage()
-    }
+    y += 6
   }
 
-  doc.end()
-  return Buffer.concat(chunks)
+  const arrayBuffer = doc.output('arraybuffer')
+  return Buffer.from(arrayBuffer)
 }
