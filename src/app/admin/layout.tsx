@@ -49,7 +49,7 @@ export default function AdminLayout({
               {/* Hamburger button */}
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="md:hidden p-2 rounded text-helix-fg hover:bg-helix-fg/10"
+                className="p-2 rounded text-helix-fg hover:bg-helix-fg/10"
                 aria-label="Toggle sidebar"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,7 +104,7 @@ export default function AdminLayout({
         <aside
           className={cn(
             "fixed inset-y-0 left-0 z-40 w-64 bg-helix-bg text-helix-fg border-r border-helix-fg/30 transform transition-transform duration-300",
-            sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
           <div className="flex flex-col h-full">
