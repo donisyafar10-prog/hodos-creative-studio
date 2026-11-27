@@ -115,15 +115,19 @@ export default function AdminLayout({
             </div>
             <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
               {navItems.map((item) => (
-                <ActiveLink
+                <div
                   key={item.href}
-                  href={item.href}
-                  className="px-3 py-2 rounded text-sm font-medium transition-colors text-helix-fg/70 hover:bg-helix-fg/10"
-                  activeClassName="bg-helix-fg/20 text-helix-fg"
                   onClick={() => setSidebarOpen(false)}
+                  className="cursor-pointer"
                 >
-                  {item.label}
-                </ActiveLink>
+                  <ActiveLink
+                    href={item.href}
+                    className="px-3 py-2 rounded text-sm font-medium transition-colors text-helix-fg/70 hover:bg-helix-fg/10"
+                    activeClassName="bg-helix-fg/20 text-helix-fg"
+                  >
+                    {item.label}
+                  </ActiveLink>
+                </div>
               ))}
               {(role === 'super_admin' || role === 'admin') && (
                 <>
@@ -131,15 +135,19 @@ export default function AdminLayout({
                     Akun
                   </div>
                   {accountItems.map((item) => (
-                    <ActiveLink
+                    <div
                       key={item.href}
-                      href={item.href}
-                      className="px-3 py-2 rounded text-sm font-medium transition-colors text-helix-fg/70 hover:bg-helix-fg/10"
-                      activeClassName="bg-helix-fg/20 text-helix-fg"
                       onClick={() => setSidebarOpen(false)}
+                      className="cursor-pointer"
                     >
-                      {item.label}
-                    </ActiveLink>
+                      <ActiveLink
+                        href={item.href}
+                        className="px-3 py-2 rounded text-sm font-medium transition-colors text-helix-fg/70 hover:bg-helix-fg/10"
+                        activeClassName="bg-helix-fg/20 text-helix-fg"
+                      >
+                        {item.label}
+                      </ActiveLink>
+                    </div>
                   ))}
                 </>
               )}
