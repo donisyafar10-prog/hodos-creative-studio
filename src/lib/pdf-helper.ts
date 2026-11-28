@@ -336,7 +336,7 @@ export function makeBukuAcaraPdf({
   event: { nama: string; tanggal: string | null; lokasi: string | null }
   categories: Array<{ id: string; nomor_acara: string; gaya: string; jenis_kelamin: string; sesi: string; urutan: number }>
   teams: Array<{ id: string; nama: string }>
-  participantsByCategory: Map<string, Array<{ id: string; nama: string; team_nama: string | null }>>
+  participantsByCategory: Map<string, Array<{ id: string; nama: string; tahun_lahir: number | null; team_nama: string | null }>>
 }): Buffer {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' })
   const startX = 15
@@ -355,58 +355,69 @@ export function makeBukuAcaraPdf({
   const tgl = event.tanggal ? new Date(event.tanggal).toLocaleDateString('id-ID') : '-'
   doc.text(`${tgl} | ${event.lokasi || '-'}`, 105, 38, { align: 'center' })
 
-  let y = 52
-
-  const headers = ['No Acara', 'Kategori', 'Jenis Kelamin', 'Sesi', 'Peserta', 'Tim']
-  const widths = [22, 35, 28, 22, 42, 42]
+  let y = 50
 
   for (const cat of categories) {
-    if (y > 250) {
+    // Cek halaman baru jika hampir penuh
+    if (y > 240) {
       doc.addPage()
       y = 20
     }
 
+    // Header acara
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(10)
-    doc.text(`Acara ${cat.nomor_acara} — ${cat.gaya} ${cat.jenis_kelamin} (${cat.sesi})`, startX, y)
-    y += 6
+    doc.setFontSize(12)
+    doc.setTextColor(242, 20, 12)
+    doc.text(`Acara ${cat.nomor_acara} — ${cat.gaya} ${cat.jenis_kelamin.charAt(0).toUpperCase() + cat.jenis_kelamin.slice(1)} (${cat.sesi})`, startX, y)
+    y += 8
 
-    // Header row
+    const participants = participantsByCategory.get(cat.id) ?? []
+
+    // Tabel header
+    const headers = ['No', 'Nama Atlet', 'Ket', 'Lahir', 'Nama Tim', 'Prestasi', 'Penyisihan', 'Akhir']
+    const colWidths = [12, 55, 15, 18, 42, 20, 20, 20]
+
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(7)
     doc.setTextColor(0, 0, 0)
-    let hx1 = startX
+    let hx = startX
     headers.forEach((h, i) => {
-      doc.text(h, hx1, y, { align: 'center' as const, maxWidth: widths[i] })
-      hx1 += widths[i]
+      doc.text(h, hx, y, { align: i === 0 ? 'center' : 'left', maxWidth: colWidths[i] })
+      hx += colWidths[i]
     })
     y += 5
 
-    const participants = participantsByCategory.get(cat.id) ?? []
+    // Garis pembatas header
+    doc.setDrawColor(200, 200, 200)
+    doc.line(startX, y, startX + colWidths.reduce((a, b) => a + b, 0), y)
+    y += 3
+
     if (participants.length === 0) {
       doc.setFont('helvetica', 'italic')
       doc.setFontSize(8)
       doc.setTextColor(102, 102, 102)
       doc.text('Belum ada peserta terdaftar.', startX, y)
-      y += 6
-      continue
+      y += 7
+    } else {
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(8)
+      participants.forEach((p, idx) => {
+        const rowVals = [
+          { text: String(idx + 1), width: colWidths[0], align: 'center' as const },
+          { text: p.nama, width: colWidths[1] },
+          { text: '-', width: colWidths[2], align: 'center' as const },
+          { text: String(p.tahun_lahir ?? '-'), width: colWidths[3], align: 'center' as const },
+          { text: p.team_nama ?? '-', width: colWidths[4] },
+          { text: '-', width: colWidths[5], align: 'center' as const },
+          { text: '-', width: colWidths[6], align: 'center' as const },
+          { text: '-', width: colWidths[7], align: 'center' as const },
+        ]
+        drawTableRow(doc, startX, y, rowVals)
+        y += 5.5
+      })
     }
 
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8)
-    for (const p of participants) {
-      const rowVals = [
-        { text: cat.nomor_acara, width: widths[0], align: 'center' as const },
-        { text: cat.gaya, width: widths[1] },
-        { text: cat.jenis_kelamin, width: widths[2], align: 'center' as const },
-        { text: cat.sesi, width: widths[3], align: 'center' as const },
-        { text: p.nama, width: widths[4] },
-        { text: p.team_nama ?? '-', width: widths[5] },
-      ]
-      drawTableRow(doc, startX, y, rowVals)
-      y += 4.5
-    }
-    y += 6
+    y += 6 // spasi antar acara
   }
 
   const arrayBuffer = doc.output('arraybuffer')
