@@ -29,11 +29,17 @@ export default function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [myRole, setMyRole] = useState<string | null>(null)
 
   async function loadAuth() {
-    const res = await fetch('/api/auth/status')
-    const json = await res.json()
-    setIsLoggedIn(!!json.isLoggedIn)
+    const [statusRes, roleRes] = await Promise.all([
+      fetch('/api/auth/status'),
+      fetch('/api/auth/role', { cache: 'no-store' }),
+    ])
+    const statusJson = await statusRes.json()
+    const roleJson = await roleRes.json()
+    setIsLoggedIn(!!statusJson.isLoggedIn)
+    setMyRole(roleJson.role ?? null)
   }
 
   useEffect(() => {
@@ -66,6 +72,16 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-3">
+            {isLoggedIn && myRole && (
+              <div className="relative">
+                <button
+                  onClick={() => router.push(myRole === 'wasit' ? '/wasit' : '/admin')}
+                  className="font-[var(--font-inter-tight)] text-[13px] font-bold tracking-[0.02em] uppercase px-4 py-2 bg-helix-fg text-helix-bg rounded hover:bg-helix-fg/90 transition-colors"
+                >
+                  {myRole === 'wasit' ? 'Panel Wasit' : 'Panel Admin'}
+                </button>
+              </div>
+            )}
             <button
               onClick={handleLogout}
               className="font-[var(--font-inter-tight)] text-[13px] font-bold tracking-[0.02em] uppercase px-4 py-2 bg-helix-fg text-helix-bg rounded hover:bg-helix-fg/90 transition-colors"
