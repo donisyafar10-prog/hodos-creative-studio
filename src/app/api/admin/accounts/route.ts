@@ -27,7 +27,13 @@ async function supabaseRequest(path: string, init?: RequestInit) {
     const body = await res.text().catch(() => '')
     return { error: `Supabase ${res.status}: ${body || res.statusText}` }
   }
-  return { data: await res.json() }
+  const text = await res.text().catch(() => '')
+  if (!text) return { data: null }
+  try {
+    return { data: JSON.parse(text) }
+  } catch {
+    return { data: text }
+  }
 }
 
 export async function GET() {
