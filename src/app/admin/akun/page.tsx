@@ -29,6 +29,16 @@ export default function AdminAkunPage() {
   const [creating, setCreating] = useState(false)
   const [myRole, setMyRole] = useState<string>('')
 
+  const loadMyRole = async () => {
+    try {
+      const res = await fetch('/api/auth/role', { cache: 'no-store' })
+      const json = await res.json()
+      setMyRole(json.role ?? '')
+    } catch {
+      setMyRole('')
+    }
+  }
+
   const loadProfiles = async () => {
     setLoading(true)
     try {
@@ -48,6 +58,7 @@ export default function AdminAkunPage() {
   }
 
   useEffect(() => {
+    loadMyRole()
     loadProfiles()
   }, [])
 
