@@ -17,12 +17,20 @@ interface Category {
   urutan: number
 }
 
+interface Participant {
+  id: string
+  nama: string
+  team_nama: string | null
+}
+
 export default function EventDetail({
   event,
   categories,
+  participantsByCategory,
 }: {
   event: Event
   categories: Category[]
+  participantsByCategory: Record<string, Participant[]>
 }) {
   return (
     <div className="space-y-8">
@@ -39,29 +47,75 @@ export default function EventDetail({
         </Link>
       </div>
 
-      <h2 className="text-2xl font-bold mb-4 uppercase">Buku Acara</h2>
+      <div className="border border-border rounded-lg p-4 mb-6">
+        <h2 className="text-2xl font-bold mb-4 uppercase">Buku Acara</h2>
+        <p className="text-sm text-muted-foreground mb-4">
+          Semua kategori acara dalam satu halaman. Silakan scroll untuk melihat seluruh peserta.
+        </p>
 
-      {categories.length === 0 ? (
-        <p className="text-muted-foreground">Belum ada kategori acara yang ditambahkan.</p>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {categories.map((cat) => (
-            <div key={cat.id} className="border border-border rounded-lg p-6">
-              <h3 className="font-anton text-xl mb-2 uppercase">
-                Acara {cat.nomor_acara}
-              </h3>
-              <p className="text-sm font-semibold mb-1">{cat.gaya} {cat.jenis_kelamin}</p>
-              <p className="text-xs text-muted-foreground">{cat.sesi}</p>
-              <Link
-                href={`/events/${event.id}/categories/${cat.id}`}
-                className="mt-4 inline-block text-sm font-medium text-primary underline underline-offset-4 hover:text-primary/80"
-              >
-                Lihat jadwal & peserta →
-              </Link>
-            </div>
-          ))}
-        </div>
-      )}
+        {categories.length === 0 ? (
+          <p className="text-muted-foreground text-center py-8">Belum ada kategori acara yang ditambahkan.</p>
+        ) : (
+          <>
+            {categories.map((cat) => {
+              const participants = participantsByCategory[cat.id] ?? []
+              return (
+                <section key={cat.id} className="border-b border-border pb-8 last:border-0 mb-8 last:mb-0">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h3 className="font-anton text-2xl mb-1 uppercase">
+                        Acara {cat.nomor_acara}
+                      </h3>
+                      <p className="text-sm font-semibold text-primary">
+                        {cat.gaya} {cat.jenis_kelamin.charAt(0).toUpperCase() + cat.jenis_kelamin.slice(1)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">{cat.sesi}</p>
+                    </div>
+                    <span className="text-xs font-bold px-2 py-1 bg-muted rounded text-muted-foreground">
+                      {participants.length} peserta
+                    </span>
+                  </div>
+
+                  <div className="overflow-x-auto border border-border rounded-lg">
+                    <table className="w-full text-left text-sm">
+                      <thead className="bg-muted/50 border-b border-border">
+                        <tr>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase w-16 text-center">No Acara</th>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase">Kategori</th>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase w-24 text-center">Jenis Kelamin</th>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase w-20 text-center">Sesi</th>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase">Peserta</th>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase">Tim</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {participants.length === 0 ? (
+                          <tr>
+                            <td className="p-4 text-center text-muted-foreground italic" colSpan={6}>
+                              Belum ada peserta terdaftar.
+                            </td>
+                          </tr>
+                        ) : (
+                          participants.map((p) => (
+                            <tr key={p.id} className="hover:bg-muted/50 transition-colors">
+                              <td className="p-3 text-center">{cat.nomor_acara}</td>
+                              <td className="p-3">{cat.gaya}</td>
+                              <td className="p-3 text-center capitalize">{cat.jenis_kelamin}</td>
+                              <td className="p-3 text-center">{cat.sesi}</td>
+                              <td className="p-3 font-medium">{p.nama}</td>
+                              <td className="p-3 text-muted-foreground">{p.team_nama ?? '-'}</td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              )
+            })}
+          </>
+        )}
+      </div>
     </div>
   )
 }

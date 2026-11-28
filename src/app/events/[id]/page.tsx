@@ -31,10 +31,29 @@ export default async function EventDetailPage({
     .eq('event_id', params.id)
     .order('urutan', { ascending: true })
 
+  const participantsByCategory: Record<string, Array<{ id: string; nama: string; team_nama: string | null }>> = {}
+  for (const cat of categories ?? []) {
+    const { data: participants } = await supabase
+      .from('participants')
+      .select('id, nama, teams(nama)')
+      .eq('event_category_id', cat.id)
+      .order('nama', { ascending: true })
+
+    participantsByCategory[cat.id] = (participants ?? []).map((p: any) => ({
+      id: p.id,
+      nama: p.nama,
+      team_nama: p?.teams?.nama ?? null,
+    }))
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground py-12 px-4">
       <div className="max-w-7xl mx-auto">
-        <EventDetail event={event} categories={categories ?? []} />
+        <EventDetail
+          event={event}
+          categories={categories ?? []}
+          participantsByCategory={participantsByCategory}
+        />
       </div>
     </div>
   )
