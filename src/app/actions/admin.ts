@@ -7,8 +7,17 @@ const ALLOWED_ROLES = ['super_admin', 'admin', 'official', 'wasit'] as const
 
 type Role = (typeof ALLOWED_ROLES)[number]
 
+function getSupabaseBase(path: string): string {
+  // Supabase Auth Admin API (auth/admin/users, auth/admin/users/:id) pakai /auth/v1,
+  // sementara database REST API (profiles, events, dst) pakai /rest/v1.
+  if (path.startsWith('auth/')) {
+    return `${SUPABASE_URL}/auth/v1/${path}`
+  }
+  return `${SUPABASE_URL}/rest/v1/${path}`
+}
+
 async function supabaseRequest(path: string, init?: RequestInit) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+  const res = await fetch(getSupabaseBase(path), {
     ...init,
     headers: {
       apikey: SERVICE_ROLE_KEY,
