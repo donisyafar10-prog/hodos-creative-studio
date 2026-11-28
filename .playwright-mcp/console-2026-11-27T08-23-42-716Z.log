@@ -1,0 +1,3 @@
+[    5411ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ https://hodos-creative-studio.vercel.app/admin/akun:1
+[  183846ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ddwgvtwzmqxbkqkuiabi.supabase.co/rest/v1/profiles?select=id,email,nama,role,created_at&limit=5:1
+[  183930ms] [LOG] SUPABASE_DIRECT: {"message":"Forbidden use of secret API key in browser","hint":"Secret API keys can only be used in a protected environment and should never be used in a browser. Delete this secret API key immediately!"} @ :5

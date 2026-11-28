@@ -1,0 +1,3 @@
+[    5135ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://hodos-creative-studio.vercel.app/admin/events/fa5f2db9-644c-4698-bc11-c2334457f747/categories/c7097d6c-1c90-4299-a4db-e2777f0ab968?_rsc=1nfpa:1
+[    5198ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://hodos-creative-studio.vercel.app/admin/events/fa5f2db9-644c-4698-bc11-c2334457f747/teams/new?_rsc=1nfpa:1
+[   67870ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://hodos-creative-studio.vercel.app/download/buku-hasil/fa5f2db9-644c-4698-bc11-c2334457f747:1

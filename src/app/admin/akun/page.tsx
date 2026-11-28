@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { createUserAccount, listUserAccounts, deleteUserAccount } from '@/app/actions/admin'
 
 type Profile = {
   id: string
@@ -42,13 +41,14 @@ export default function AdminAkunPage() {
   const loadProfiles = async () => {
     setLoading(true)
     try {
-      const res = await listUserAccounts()
-      if (res.error) {
-        setError(res.error)
+      const res = await fetch('/api/admin/accounts')
+      const json = await res.json()
+      if (json.error) {
+        setError(json.error)
         setProfiles([])
       } else {
         setError(null)
-        setProfiles(res.profiles ?? [])
+        setProfiles(json.profiles ?? [])
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Gagal memuat daftar akun.')
@@ -69,14 +69,24 @@ export default function AdminAkunPage() {
     setCreating(true)
 
     try {
-      const formData = new FormData(e.currentTarget as HTMLFormElement)
-      const res = await createUserAccount(formData)
-
-      if (res.error) {
-        setError(res.error)
+      const form = e.currentTarget as HTMLFormElement
+      const formData = new FormData(form)
+      const res = await fetch('/api/admin/accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.get('email'),
+          password: formData.get('password'),
+          nama: formData.get('nama'),
+          role: formData.get('role'),
+        }),
+      })
+      const json = await res.json()
+      if (json.error) {
+        setError(json.error)
       } else {
         setSuccess('Akun berhasil dibuat.')
-        ;(e.currentTarget as HTMLFormElement).reset()
+        form.reset()
         await loadProfiles()
       }
     } catch (e) {
@@ -89,9 +99,10 @@ export default function AdminAkunPage() {
   const handleDelete = async (id: string) => {
     if (!window.confirm('Yakin ingin menghapus akun ini?')) return
     try {
-      const res = await deleteUserAccount(id)
-      if (res.error) {
-        setError(res.error)
+      const res = await fetch(`/api/admin/accounts/${id}`, { method: 'DELETE' })
+      const json = await res.json()
+      if (json.error) {
+        setError(json.error)
         return
       }
       setSuccess('Akun berhasil dihapus.')

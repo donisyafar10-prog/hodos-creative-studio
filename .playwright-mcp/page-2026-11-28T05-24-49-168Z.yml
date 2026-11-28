@@ -1,0 +1,43 @@
+- generic [active] [ref=f20e1]:
+  - generic [ref=f20e2]:
+    - navigation [ref=f20e3]:
+      - generic [ref=f20e5]:
+        - generic [ref=f20e6]:
+          - button "Toggle sidebar" [ref=f20e7] [cursor=pointer]
+          - link "Hodos Creative Studio" [ref=f20e10] [cursor=pointer]:
+            - /url: /
+        - generic [ref=f20e12]:
+          - link "Dashboard" [ref=f20e13] [cursor=pointer]:
+            - /url: /admin
+          - link "Events" [ref=f20e14] [cursor=pointer]:
+            - /url: /admin/events
+        - button "Logout" [ref=f20e16] [cursor=pointer]
+    - generic [ref=f20e17]:
+      - complementary [ref=f20e18]:
+        - generic [ref=f20e19]:
+          - link "Admin Panel" [ref=f20e21] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f20e22]:
+            - link "Dashboard" [ref=f20e24] [cursor=pointer]:
+              - /url: /admin
+            - link "Events" [ref=f20e26] [cursor=pointer]:
+              - /url: /admin/events
+          - paragraph [ref=f20e28]: Hodos Creative Studio
+      - main [ref=f20e29]:
+        - generic [ref=f20e30]:
+          - heading "Dashboard" [level=1] [ref=f20e31]
+          - generic [ref=f20e32]:
+            - generic [ref=f20e33]:
+              - heading "Total Event" [level=3] [ref=f20e34]
+              - paragraph [ref=f20e35]: "8"
+            - generic [ref=f20e36]:
+              - heading "Total Kategori Acara" [level=3] [ref=f20e37]
+              - paragraph [ref=f20e38]: "6"
+            - generic [ref=f20e39]:
+              - heading "Total Peserta" [level=3] [ref=f20e40]
+              - paragraph [ref=f20e41]: "61"
+          - generic [ref=f20e42]:
+            - heading "Quick Actions" [level=2] [ref=f20e43]
+            - link "+ Buat Event Baru" [ref=f20e45] [cursor=pointer]:
+              - /url: /admin/events/new
+  - alert [ref=f20e46]

@@ -1,0 +1,107 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - navigation [ref=f3e3]:
+      - generic [ref=f3e5]:
+        - generic [ref=f3e6]:
+          - button "Toggle sidebar" [ref=f3e7] [cursor=pointer]
+          - link "Hodos Creative Studio" [ref=f3e10] [cursor=pointer]:
+            - /url: /
+        - generic [ref=f3e12]:
+          - link "Dashboard" [ref=f3e13] [cursor=pointer]:
+            - /url: /admin
+          - link "Events" [ref=f3e14] [cursor=pointer]:
+            - /url: /admin/events
+        - button "Logout" [ref=f3e16] [cursor=pointer]
+    - generic [ref=f3e17]:
+      - complementary [ref=f3e18]:
+        - generic [ref=f3e19]:
+          - link "Admin Panel" [ref=f3e21] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f3e22]:
+            - link "Dashboard" [ref=f3e24] [cursor=pointer]:
+              - /url: /admin
+            - link "Events" [ref=f3e26] [cursor=pointer]:
+              - /url: /admin/events
+          - paragraph [ref=f3e28]: Hodos Creative Studio
+      - main [ref=f3e29]:
+        - generic [ref=f3e30]:
+          - generic [ref=f3e31]:
+            - heading "Kelola Event" [level=1] [ref=f3e32]
+            - link "+ Event Baru" [ref=f3e33] [cursor=pointer]:
+              - /url: /admin/events/new
+          - table [ref=f3e35]:
+            - rowgroup [ref=f3e36]:
+              - row [ref=f3e37]:
+                - columnheader "Nama Event" [ref=f3e38]
+                - columnheader "Tanggal" [ref=f3e39]
+                - columnheader "Lokasi" [ref=f3e40]
+                - columnheader "Status" [ref=f3e41]
+                - columnheader "Aksi" [ref=f3e42]
+            - rowgroup [ref=f3e43]:
+              - row [ref=f3e44]:
+                - cell "Selam" [ref=f3e45]
+                - cell "30 Nov 2026" [ref=f3e46]
+                - cell "Kendari" [ref=f3e47]
+                - cell "published" [ref=f3e48]
+                - cell [ref=f3e49]:
+                  - generic [ref=f3e50]:
+                    - link "Kelola" [ref=f3e51] [cursor=pointer]:
+                      - /url: /admin/events/8e43c591-b818-4026-ab46-50dbc5a28a44
+                    - link "+ Kategori" [ref=f3e52] [cursor=pointer]:
+                      - /url: /admin/events/8e43c591-b818-4026-ab46-50dbc5a28a44/categories/new
+              - row [ref=f3e53]:
+                - cell "Selam" [ref=f3e54]
+                - cell "30 Nov 2026" [ref=f3e55]
+                - cell "Kendari" [ref=f3e56]
+                - cell "draft" [ref=f3e57]
+                - cell [ref=f3e58]:
+                  - generic [ref=f3e59]:
+                    - link "Kelola" [ref=f3e60] [cursor=pointer]:
+                      - /url: /admin/events/cbdecca4-5da2-4998-aad2-236e36044b3d
+                    - link "+ Kategori" [ref=f3e61] [cursor=pointer]:
+                      - /url: /admin/events/cbdecca4-5da2-4998-aad2-236e36044b3d/categories/new
+              - row [ref=f3e62]:
+                - cell "Selam" [ref=f3e63]
+                - cell "30 Nov 2026" [ref=f3e64]
+                - cell "Kendari" [ref=f3e65]
+                - cell "draft" [ref=f3e66]
+                - cell [ref=f3e67]:
+                  - generic [ref=f3e68]:
+                    - link "Kelola" [ref=f3e69] [cursor=pointer]:
+                      - /url: /admin/events/04ee5907-dd40-4239-9ca2-a4919e48b8c1
+                    - link "+ Kategori" [ref=f3e70] [cursor=pointer]:
+                      - /url: /admin/events/04ee5907-dd40-4239-9ca2-a4919e48b8c1/categories/new
+              - row [ref=f3e71]:
+                - cell "Kejurnas 2022" [ref=f3e72]
+                - cell "15 Aug 2022" [ref=f3e73]
+                - cell "Surabaya" [ref=f3e74]
+                - cell "finished" [ref=f3e75]
+                - cell [ref=f3e76]:
+                  - generic [ref=f3e77]:
+                    - link "Kelola" [ref=f3e78] [cursor=pointer]:
+                      - /url: /admin/events/fa5f2db9-644c-4698-bc11-c2334457f747
+                    - link "+ Kategori" [ref=f3e79] [cursor=pointer]:
+                      - /url: /admin/events/fa5f2db9-644c-4698-bc11-c2334457f747/categories/new
+              - row [ref=f3e80]:
+                - cell "Porprov Selam" [ref=f3e81]
+                - cell "08 Dec 2026" [ref=f3e82]
+                - cell "Kendari" [ref=f3e83]
+                - cell "draft" [ref=f3e84]
+                - cell [ref=f3e85]:
+                  - generic [ref=f3e86]:
+                    - link "Kelola" [ref=f3e87] [cursor=pointer]:
+                      - /url: /admin/events/9d14d507-7337-4093-a68e-72cf5ef2a474
+                    - link "+ Kategori" [ref=f3e88] [cursor=pointer]:
+                      - /url: /admin/events/9d14d507-7337-4093-a68e-72cf5ef2a474/categories/new
+              - row [ref=f3e89]:
+                - cell "Porprov Selam" [ref=f3e90]
+                - cell "08 Dec 2026" [ref=f3e91]
+                - cell "Kendari" [ref=f3e92]
+                - cell "draft" [ref=f3e93]
+                - cell [ref=f3e94]:
+                  - generic [ref=f3e95]:
+                    - link "Kelola" [ref=f3e96] [cursor=pointer]:
+                      - /url: /admin/events/31c67b9d-078f-448a-9e66-ab83a0995244
+                    - link "+ Kategori" [ref=f3e97] [cursor=pointer]:
+                      - /url: /admin/events/31c67b9d-078f-448a-9e66-ab83a0995244/categories/new
+  - alert [ref=f3e98]

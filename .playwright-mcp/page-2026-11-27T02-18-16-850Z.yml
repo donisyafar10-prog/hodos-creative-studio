@@ -1,0 +1,71 @@
+- generic [active] [ref=f4e1]:
+  - generic [ref=f4e2]:
+    - navigation [ref=f4e3]:
+      - generic [ref=f4e5]:
+        - generic [ref=f4e6]:
+          - button "Toggle sidebar" [ref=f4e7] [cursor=pointer]
+          - link "Hodos Creative Studio" [ref=f4e10] [cursor=pointer]:
+            - /url: /
+        - generic [ref=f4e12]:
+          - link "Dashboard" [ref=f4e13] [cursor=pointer]:
+            - /url: /admin
+          - link "Events" [ref=f4e14] [cursor=pointer]:
+            - /url: /admin/events
+        - button "Logout" [ref=f4e16] [cursor=pointer]
+    - generic [ref=f4e17]:
+      - complementary [ref=f4e18]:
+        - generic [ref=f4e19]:
+          - link "Admin Panel" [ref=f4e21] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f4e22]:
+            - link "Dashboard" [ref=f4e24] [cursor=pointer]:
+              - /url: /admin
+            - link "Events" [ref=f4e26] [cursor=pointer]:
+              - /url: /admin/events
+          - paragraph [ref=f4e28]: Hodos Creative Studio
+      - main [ref=f4e29]:
+        - generic [ref=f4e31]:
+          - generic [ref=f4e32]:
+            - generic [ref=f4e33]:
+              - heading "Kejurnas 2022" [level=1] [ref=f4e34]
+              - paragraph [ref=f4e35]: 15 Aug 2022 | Surabaya
+            - generic [ref=f4e36]:
+              - combobox [ref=f4e37]:
+                - option "Draft"
+                - option "Published"
+                - option "Ongoing"
+                - option "Finished" [selected]
+              - link "Kembali" [ref=f4e38] [cursor=pointer]:
+                - /url: /admin/events
+              - link "Unduh Buku Acara" [ref=f4e39] [cursor=pointer]:
+                - /url: /download/buku-acara/fa5f2db9-644c-4698-bc11-c2334457f747
+              - link "Unduh Buku Hasil" [ref=f4e40] [cursor=pointer]:
+                - /url: /download/buku-hasil/fa5f2db9-644c-4698-bc11-c2334457f747
+          - generic [ref=f4e41]:
+            - generic [ref=f4e42]:
+              - generic [ref=f4e43]:
+                - heading "Kategori Acara" [level=2] [ref=f4e44]
+                - link [ref=f4e45] [cursor=pointer]:
+                  - /url: /admin/events/fa5f2db9-644c-4698-bc11-c2334457f747/categories/new
+                  - button "+ Tambah" [ref=f4e46]
+              - 'link "Acara 101: 50m Bifins putra sore" [ref=f4e48] [cursor=pointer]':
+                - /url: /admin/events/fa5f2db9-644c-4698-bc11-c2334457f747/categories/c7097d6c-1c90-4299-a4db-e2777f0ab968
+                - generic [ref=f4e49]: "Acara 101: 50m Bifins putra"
+                - generic [ref=f4e50]: sore
+            - generic [ref=f4e51]:
+              - generic [ref=f4e52]:
+                - heading "Tim Terdaftar" [level=2] [ref=f4e53]
+                - link [ref=f4e54] [cursor=pointer]:
+                  - /url: /admin/events/fa5f2db9-644c-4698-bc11-c2334457f747/teams/new
+                  - button "+ Tambah Tim" [ref=f4e55]
+              - generic [ref=f4e56]:
+                - generic [ref=f4e57]: Wakatobi
+                - generic [ref=f4e59]: Sultra
+                - generic [ref=f4e61]: Kota Kendari
+                - generic [ref=f4e63]: Kab. Buton Selatan
+                - generic [ref=f4e65]: Kab. Konawe
+                - generic [ref=f4e67]: Kab. Konawe Selatan
+                - generic [ref=f4e69]: Kab. Kolaka
+                - generic [ref=f4e71]: Kab. Bombana
+                - generic [ref=f4e73]: Kab. Konawe Utara
+  - alert [ref=f4e75]

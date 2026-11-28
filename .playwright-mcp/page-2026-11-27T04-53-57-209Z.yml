@@ -1,0 +1,56 @@
+- generic [active] [ref=f15e1]:
+  - generic [ref=f15e2]:
+    - navigation [ref=f15e3]:
+      - generic [ref=f15e5]:
+        - generic [ref=f15e6]:
+          - button "Toggle sidebar" [ref=f15e7] [cursor=pointer]
+          - link "Hodos Creative Studio" [ref=f15e10] [cursor=pointer]:
+            - /url: /
+        - generic [ref=f15e12]:
+          - link "Dashboard" [ref=f15e13] [cursor=pointer]:
+            - /url: /admin
+          - link "Events" [ref=f15e14] [cursor=pointer]:
+            - /url: /admin/events
+        - button "Logout" [ref=f15e16] [cursor=pointer]
+    - generic [ref=f15e17]:
+      - complementary [ref=f15e18]:
+        - generic [ref=f15e19]:
+          - link "Admin Panel" [ref=f15e21] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f15e22]:
+            - link "Dashboard" [ref=f15e24] [cursor=pointer]:
+              - /url: /admin
+            - link "Events" [ref=f15e26] [cursor=pointer]:
+              - /url: /admin/events
+          - paragraph [ref=f15e28]: Hodos Creative Studio
+      - main [ref=f15e29]:
+        - generic [ref=f15e31]:
+          - generic [ref=f15e32]:
+            - generic [ref=f15e33]:
+              - heading "Kelola Akun" [level=1] [ref=f15e34]
+              - paragraph [ref=f15e35]: Kelola akun admin, official/tim, dan wasit
+            - link "← Kembali ke Dashboard" [ref=f15e36] [cursor=pointer]:
+              - /url: /admin
+          - generic [ref=f15e37]:
+            - heading "Buat Akun Baru" [level=2] [ref=f15e38]
+            - generic [ref=f15e39]:
+              - generic [ref=f15e40]:
+                - generic [ref=f15e41]: Email
+                - textbox [ref=f15e42]
+              - generic [ref=f15e43]:
+                - generic [ref=f15e44]: Nama
+                - textbox [ref=f15e45]
+              - generic [ref=f15e46]:
+                - generic [ref=f15e47]: Password
+                - textbox [ref=f15e48]
+              - generic [ref=f15e49]:
+                - generic [ref=f15e50]: Role
+                - combobox [ref=f15e51]:
+                  - option "Official / Tim" [selected]
+                  - option "Wasit"
+              - button "Buat Akun" [ref=f15e53] [cursor=pointer]
+            - paragraph [ref=f15e54]: Admin hanya dapat membuat akun untuk Official/Tim dan Wasit.
+          - generic [ref=f15e55]:
+            - heading "Daftar Akun" [level=2] [ref=f15e57]
+            - generic [ref=f15e58]: Memuat...
+  - alert [ref=f15e59]

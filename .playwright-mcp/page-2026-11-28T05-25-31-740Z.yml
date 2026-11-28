@@ -1,0 +1,125 @@
+- generic [ref=f21e1]:
+  - generic [ref=f21e2]:
+    - navigation [ref=f21e3]:
+      - generic [ref=f21e5]:
+        - generic [ref=f21e6]:
+          - button "Toggle sidebar" [ref=f21e7] [cursor=pointer]
+          - link "Hodos Creative Studio" [ref=f21e10] [cursor=pointer]:
+            - /url: /
+        - generic [ref=f21e12]:
+          - link "Dashboard" [ref=f21e13] [cursor=pointer]:
+            - /url: /admin
+          - link "Events" [ref=f21e14] [cursor=pointer]:
+            - /url: /admin/events
+        - button "Logout" [ref=f21e16] [cursor=pointer]
+    - generic [ref=f21e17]:
+      - complementary [ref=f21e18]:
+        - generic [ref=f21e19]:
+          - link "Admin Panel" [ref=f21e21] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f21e22]:
+            - link "Dashboard" [ref=f21e24] [cursor=pointer]:
+              - /url: /admin
+            - link "Events" [ref=f21e26] [cursor=pointer]:
+              - /url: /admin/events
+            - generic [ref=f21e60]: Akun
+            - link "Kelola Akun" [ref=f21e62] [cursor=pointer]:
+              - /url: /admin/akun
+          - paragraph [ref=f21e28]: Hodos Creative Studio
+      - main [ref=f21e29]:
+        - generic [ref=f21e31]:
+          - generic [ref=f21e32]:
+            - generic [ref=f21e33]:
+              - heading "Kelola Akun" [level=1] [ref=f21e34]
+              - paragraph [ref=f21e35]: Kelola akun admin, official/tim, dan wasit
+            - link "← Kembali ke Dashboard" [ref=f21e36] [cursor=pointer]:
+              - /url: /admin
+          - generic [ref=f21e37]:
+            - heading "Buat Akun Baru" [level=2] [ref=f21e38]
+            - generic [ref=f21e39]:
+              - generic [ref=f21e40]:
+                - generic [ref=f21e41]: Email
+                - textbox [active] [ref=f21e42]
+              - generic [ref=f21e43]:
+                - generic [ref=f21e44]: Nama
+                - textbox [ref=f21e45]
+              - generic [ref=f21e46]:
+                - generic [ref=f21e47]: Password
+                - textbox [ref=f21e48]
+              - generic [ref=f21e49]:
+                - generic [ref=f21e50]: Role
+                - combobox [ref=f21e51]:
+                  - option "Super Admin"
+                  - option "Admin"
+                  - option "Official / Tim" [selected]
+                  - option "Wasit"
+              - button "Buat Akun" [ref=f21e53] [cursor=pointer]
+            - paragraph [ref=f21e54]: Super Admin dapat membuat akun untuk semua role.
+          - generic [ref=f21e55]:
+            - heading "Daftar Akun" [level=2] [ref=f21e57]
+            - table [ref=f21e63]:
+              - rowgroup [ref=f21e64]:
+                - row [ref=f21e65]:
+                  - columnheader "Email" [ref=f21e66]
+                  - columnheader "Nama" [ref=f21e67]
+                  - columnheader "Role" [ref=f21e68]
+                  - columnheader "Terdaftar sejak" [ref=f21e69]
+                  - columnheader "Aksi" [ref=f21e70]
+              - rowgroup [ref=f21e71]:
+                - row [ref=f21e72]:
+                  - cell "donisyafar329@gmail.com" [ref=f21e73]
+                  - cell "Aasyifa Putri Ramdhani" [ref=f21e74]
+                  - cell "wasit" [ref=f21e75]
+                  - cell "28/11/2026" [ref=f21e76]
+                  - cell [ref=f21e77]:
+                    - button "Hapus" [ref=f21e78] [cursor=pointer]
+                - row [ref=f21e79]:
+                  - cell "donisyafar789@gmail.com" [ref=f21e80]
+                  - cell "Arkana Putra Karaya" [ref=f21e81]
+                  - cell "official" [ref=f21e82]
+                  - cell "28/11/2026" [ref=f21e83]
+                  - cell [ref=f21e84]:
+                    - button "Hapus" [ref=f21e85] [cursor=pointer]
+                - row [ref=f21e86]:
+                  - cell "donisyafar3@gmail.com" [ref=f21e87]
+                  - cell "Arkana Putra Karaya" [ref=f21e88]
+                  - cell "official" [ref=f21e89]
+                  - cell "28/11/2026" [ref=f21e90]
+                  - cell [ref=f21e91]:
+                    - button "Hapus" [ref=f21e92] [cursor=pointer]
+                - row [ref=f21e93]:
+                  - cell "donisyafar1@gmail.com" [ref=f21e94]
+                  - cell "Ahmad Azhar" [ref=f21e95]
+                  - cell "official" [ref=f21e96]
+                  - cell "28/11/2026" [ref=f21e97]
+                  - cell [ref=f21e98]:
+                    - button "Hapus" [ref=f21e99] [cursor=pointer]
+                - row [ref=f21e100]:
+                  - cell "donisyafar7@gmail.com" [ref=f21e101]
+                  - cell "Admin" [ref=f21e102]
+                  - cell "admin" [ref=f21e103]
+                  - cell "28/11/2026" [ref=f21e104]
+                  - cell [ref=f21e105]:
+                    - button "Hapus" [ref=f21e106] [cursor=pointer]
+                - row [ref=f21e107]:
+                  - cell "donisyafar666@gmail.com" [ref=f21e108]
+                  - cell "Admin" [ref=f21e109]
+                  - cell "admin" [ref=f21e110]
+                  - cell "28/11/2026" [ref=f21e111]
+                  - cell [ref=f21e112]:
+                    - button "Hapus" [ref=f21e113] [cursor=pointer]
+                - row [ref=f21e114]:
+                  - cell "donisyafar9@gmail.com" [ref=f21e115]
+                  - cell "Ahmad Azhar" [ref=f21e116]
+                  - cell "super_admin" [ref=f21e117]
+                  - cell "28/11/2026" [ref=f21e118]
+                  - cell [ref=f21e119]:
+                    - button "Hapus" [ref=f21e120] [cursor=pointer]
+                - row [ref=f21e121]:
+                  - cell "donisyafar10@gmail.com" [ref=f21e122]
+                  - cell "Super Admin" [ref=f21e123]
+                  - cell "super_admin" [ref=f21e124]
+                  - cell "26/11/2026" [ref=f21e125]
+                  - cell [ref=f21e126]:
+                    - button "Hapus" [ref=f21e127] [cursor=pointer]
+  - alert [ref=f21e59]
