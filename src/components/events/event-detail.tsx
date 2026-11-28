@@ -20,6 +20,7 @@ interface Category {
 interface Participant {
   id: string
   nama: string
+  tahun_lahir: number | null
   team_nama: string | null
 }
 
@@ -80,30 +81,34 @@ export default function EventDetail({
                     <table className="w-full text-left text-sm">
                       <thead className="bg-muted/50 border-b border-border">
                         <tr>
-                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase w-16 text-center">No Acara</th>
-                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase">Kategori</th>
-                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase w-24 text-center">Jenis Kelamin</th>
-                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase w-20 text-center">Sesi</th>
-                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase">Peserta</th>
-                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase">Tim</th>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase w-12 text-center">No</th>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase">Nama Atlet</th>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase w-16 text-center">Ket</th>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase w-20 text-center">Lahir</th>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase">Nama Tim</th>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase w-20 text-center">Prestasi</th>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase w-20 text-center">Penyisihan</th>
+                          <th className="p-3 text-xs font-medium text-muted-foreground uppercase w-20 text-center">Akhir</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
                         {participants.length === 0 ? (
                           <tr>
-                            <td className="p-4 text-center text-muted-foreground italic" colSpan={6}>
+                            <td className="p-4 text-center text-muted-foreground italic" colSpan={8}>
                               Belum ada peserta terdaftar.
                             </td>
                           </tr>
                         ) : (
-                          participants.map((p) => (
+                          participants.map((p, idx) => (
                             <tr key={p.id} className="hover:bg-muted/50 transition-colors">
-                              <td className="p-3 text-center">{cat.nomor_acara}</td>
-                              <td className="p-3">{cat.gaya}</td>
-                              <td className="p-3 text-center capitalize">{cat.jenis_kelamin}</td>
-                              <td className="p-3 text-center">{cat.sesi}</td>
+                              <td className="p-3 text-center">{idx + 1}</td>
                               <td className="p-3 font-medium">{p.nama}</td>
-                              <td className="p-3 text-muted-foreground">{p.team_nama ?? '-'}</td>
+                              <td className="p-3 text-center text-muted-foreground">-</td>
+                              <td className="p-3 text-center">{p.tahun_lahir ?? '-'}</td>
+                              <td className="p-3">{p.team_nama ?? '-'}</td>
+                              <td className="p-3 text-center text-muted-foreground">-</td>
+                              <td className="p-3 text-center text-muted-foreground">-</td>
+                              <td className="p-3 text-center text-muted-foreground">-</td>
                             </tr>
                           ))
                         )}

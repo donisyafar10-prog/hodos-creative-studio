@@ -31,17 +31,18 @@ export default async function EventDetailPage({
     .eq('event_id', params.id)
     .order('urutan', { ascending: true })
 
-  const participantsByCategory: Record<string, Array<{ id: string; nama: string; team_nama: string | null }>> = {}
+  const participantsByCategory: Record<string, Array<{ id: string; nama: string; tahun_lahir: number | null; team_nama: string | null }>> = {}
   for (const cat of categories ?? []) {
     const { data: participants } = await supabase
       .from('participants')
-      .select('id, nama, teams(nama)')
+      .select('id, nama, tahun_lahir, teams(nama)')
       .eq('event_category_id', cat.id)
       .order('nama', { ascending: true })
 
     participantsByCategory[cat.id] = (participants ?? []).map((p: any) => ({
       id: p.id,
       nama: p.nama,
+      tahun_lahir: p.tahun_lahir ?? null,
       team_nama: p?.teams?.nama ?? null,
     }))
   }
