@@ -8,10 +8,12 @@ const ALLOWED_ROLES = ['super_admin', 'admin', 'official', 'wasit'] as const
 type Role = (typeof ALLOWED_ROLES)[number]
 
 function getSupabaseBase(path: string): string {
-  // Supabase Auth Admin API (auth/admin/users, auth/admin/users/:id) pakai /auth/v1,
+  // Supabase Auth Admin API (admin/users, admin/users/:id) pakai /auth/v1,
   // sementara database REST API (profiles, events, dst) pakai /rest/v1.
   if (path.startsWith('auth/')) {
-    return `${SUPABASE_URL}/auth/v1/${path}`
+    // buang prefix 'auth/' lalu tambahkan /auth/v1/ -> /auth/v1/admin/users
+    const authPath = path.slice('auth/'.length)
+    return `${SUPABASE_URL}/auth/v1/${authPath}`
   }
   return `${SUPABASE_URL}/rest/v1/${path}`
 }
