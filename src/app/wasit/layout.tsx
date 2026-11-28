@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { requireRole } from '@/lib/auth'
+import WasitLogoutButton from '@/components/wasit/logout-button'
 import { ActiveLink } from '@/components/layout/active-link'
 
 export default async function WasitLayout({
@@ -29,12 +30,7 @@ export default async function WasitLayout({
               >
                 Dashboard
               </ActiveLink>
-              <Link
-                href="/login"
-                className="px-4 py-2 text-xs font-bold tracking-widest uppercase bg-helix-fg text-helix-bg rounded hover:bg-helix-fg/90 transition-colors"
-              >
-                Logout
-              </Link>
+              <WasitLogoutButton />
             </div>
           </div>
         </div>
