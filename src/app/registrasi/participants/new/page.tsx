@@ -1,10 +1,18 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+
+interface Category {
+  id: string
+  nomor_acara: string
+  gaya: string
+  jenis_kelamin: string
+  sesi: string
+}
 
 function NewParticipantPageContent() {
   const router = useRouter()
@@ -12,6 +20,17 @@ function NewParticipantPageContent() {
   const eventId = searchParams.get('eventId')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [categories, setCategories] = useState<Category[]>([])
+
+  useEffect(() => {
+    if (!eventId) return
+    fetch(`/api/registrasi/categories?event_id=${eventId}`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (Array.isArray(json)) setCategories(json)
+      })
+      .catch(() => {})
+  }, [eventId])
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -88,6 +107,11 @@ function NewParticipantPageContent() {
           <Label htmlFor="kategori">Kategori Acara</Label>
           <select id="kategori" name="kategori" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
             <option value="">Pilih kategori...</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                Acara {c.nomor_acara} — {c.gaya} {c.jenis_kelamin} ({c.sesi})
+              </option>
+            ))}
           </select>
         </div>
 
