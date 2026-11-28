@@ -3,12 +3,6 @@
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
-function requireServiceKey() {
-  if (!SERVICE_ROLE_KEY) {
-    throw new Error('SUPABASE_SERVICE_ROLE_KEY belum di-set di environment variables Vercel.')
-  }
-}
-
 const ALLOWED_ROLES = ['super_admin', 'admin', 'official', 'wasit'] as const
 
 type Role = (typeof ALLOWED_ROLES)[number]
@@ -25,7 +19,9 @@ function getSupabaseBase(path: string): string {
 }
 
 async function supabaseRequest(path: string, init?: RequestInit) {
-  requireServiceKey()
+  if (!SERVICE_ROLE_KEY) {
+    return { error: 'SUPABASE_SERVICE_ROLE_KEY belum di-set di environment variables Vercel.' }
+  }
   const res = await fetch(getSupabaseBase(path), {
     ...init,
     headers: {
@@ -55,7 +51,7 @@ export async function createUserAccount(formData: FormData) {
   const authRes = await supabaseRequest('auth/admin/users', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, email_confirm: false }),
+    body: JSON.stringify({ email, password, email_confirm: true }),
   })
 
   if ('error' in authRes) {
@@ -109,6 +105,9 @@ export async function deleteUserAccount(userId: string) {
   if ('error' in res) {
     return { error: res.error }
   }
+
+  // Hapus juga profilnya (kalau ada)
+  await supabaseRequest(`profiles?id=eq.${userId}`, { method: 'DELETE' })
 
   return { success: true, error: null }
 }
