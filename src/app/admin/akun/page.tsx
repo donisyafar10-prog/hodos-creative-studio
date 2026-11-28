@@ -33,7 +33,13 @@ export default function AdminAkunPage() {
     setLoading(true)
     try {
       const res = await listUserAccounts()
-      setProfiles(res.profiles ?? [])
+      if (res.error) {
+        setError(res.error)
+        setProfiles([])
+      } else {
+        setError(null)
+        setProfiles(res.profiles ?? [])
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Gagal memuat daftar akun.')
     } finally {

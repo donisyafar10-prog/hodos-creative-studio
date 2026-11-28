@@ -70,7 +70,7 @@ export async function createUserAccount(formData: FormData) {
     return { error: profileRes.error || 'Gagal membuat profil.' }
   }
 
-  return { success: true }
+  return { success: true, error: null }
 }
 
 export async function listUserAccounts() {
@@ -79,10 +79,10 @@ export async function listUserAccounts() {
   )
 
   if ('error' in res) {
-    return { error: res.error }
+    return { error: res.error, profiles: [] }
   }
 
-  return { profiles: res.data ?? [] }
+  return { error: null, profiles: res.data ?? [] }
 }
 
 export async function deleteUserAccount(userId: string) {
@@ -93,5 +93,5 @@ export async function deleteUserAccount(userId: string) {
     return { error: res.error }
   }
 
-  return { success: true }
+  return { success: true, error: null }
 }
