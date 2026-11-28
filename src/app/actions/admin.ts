@@ -59,7 +59,15 @@ export async function createUserAccount(formData: FormData) {
   })
 
   if ('error' in authRes) {
-    return { error: authRes.error || 'Gagal membuat akun.' }
+    // Terjemahkan error umum Supabase Auth ke pesan yang lebih mudah dipahami
+    const raw = authRes.error || ''
+    if (raw.includes('email_exists') || raw.includes('already been registered')) {
+      return { error: `Email "${email}" sudah terdaftar. Gunakan email lain.` }
+    }
+    if (raw.includes('password')) {
+      return { error: 'Password tidak valid. Gunakan minimal 6 karakter.' }
+    }
+    return { error: raw || 'Gagal membuat akun.' }
   }
 
   const userId = authRes.data?.id
