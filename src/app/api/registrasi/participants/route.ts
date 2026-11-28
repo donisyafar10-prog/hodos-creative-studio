@@ -39,15 +39,15 @@ export async function POST(req: Request) {
   if ('error' in auth) return auth.error
 
   const body = await req.json()
-  const { nama, tim, tahun_lahir, gender, event_id, kategori_id } = body
+  const { nama, tim, tahun_lahir, gender, event_id, kategori_id, team_id } = body
 
   if (!nama || !event_id) {
     return NextResponse.json({ error: 'Nama atlet dan event wajib diisi' }, { status: 400 })
   }
 
-  // Find or create team
-  let teamId: string | null = null
-  if (tim) {
+  // Tentukan team_id: dari team_id langsung, atau cari/buat berdasarkan nama tim
+  let resolvedTeamId: string | null = team_id || null
+  if (!resolvedTeamId && tim) {
     const { data: existingTeam } = await supabase
       .from('teams')
       .select('id')
@@ -56,14 +56,14 @@ export async function POST(req: Request) {
       .single()
 
     if (existingTeam) {
-      teamId = existingTeam.id
+      resolvedTeamId = existingTeam.id
     } else {
       const { data: newTeam } = await supabase
         .from('teams')
         .insert({ nama: tim, event_id })
         .select('id')
         .single()
-      teamId = newTeam?.id ?? null
+      resolvedTeamId = newTeam?.id ?? null
     }
   }
 
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
     .from('participants')
     .insert({
       nama,
-      team_id: teamId,
+      team_id: resolvedTeamId,
       tahun_lahir: tahun_lahir ? Number(tahun_lahir) : null,
       gender,
       event_category_id: kategori_id || null,
