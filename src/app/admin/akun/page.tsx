@@ -51,24 +51,32 @@ export default function AdminAkunPage() {
     setSuccess(null)
     setCreating(true)
 
-    const formData = new FormData(e.currentTarget as HTMLFormElement)
-    const res = await createUserAccount(formData)
+    try {
+      const formData = new FormData(e.currentTarget as HTMLFormElement)
+      const res = await createUserAccount(formData)
 
-    if (res.error) {
-      setError(res.error)
-    } else {
-      setSuccess('Akun berhasil dibuat.')
-      ;(e.currentTarget as HTMLFormElement).reset()
-      await loadProfiles()
+      if (res.error) {
+        setError(res.error)
+      } else {
+        setSuccess('Akun berhasil dibuat.')
+        ;(e.currentTarget as HTMLFormElement).reset()
+        await loadProfiles()
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Terjadi kesalahan saat membuat akun.')
+    } finally {
+      setCreating(false)
     }
-
-    setCreating(false)
   }
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Yakin ingin menghapus akun ini?')) return
     try {
-      await deleteUserAccount(id)
+      const res = await deleteUserAccount(id)
+      if (res.error) {
+        setError(res.error)
+        return
+      }
       setSuccess('Akun berhasil dihapus.')
       await loadProfiles()
     } catch (e) {

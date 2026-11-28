@@ -18,9 +18,9 @@ async function supabaseRequest(path: string, init?: RequestInit) {
   })
   if (!res.ok) {
     const body = await res.text().catch(() => '')
-    throw new Error(`Supabase ${res.status}: ${body || res.statusText}`)
+    return { error: `Supabase ${res.status}: ${body || res.statusText}` }
   }
-  return res.json()
+  return { data: await res.json() }
 }
 
 export async function createUserAccount(formData: FormData) {
@@ -40,33 +40,49 @@ export async function createUserAccount(formData: FormData) {
     body: JSON.stringify({ email, password, email_confirm: true }),
   })
 
-  if (authRes.error) {
-    return { error: authRes.error?.message || 'Gagal membuat akun.' }
+  if ('error' in authRes) {
+    return { error: authRes.error || 'Gagal membuat akun.' }
   }
 
-  const userId = authRes.id
+  const userId = authRes.data?.id
+
+  if (!userId) {
+    return { error: 'Gagal membuat akun: tidak mendapat ID user.' }
+  }
 
   // 2. Buat profil user
-  await supabaseRequest('profiles', {
+  const profileRes = await supabaseRequest('profiles', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id: userId, email, nama, role }),
   })
 
+  if ('error' in profileRes) {
+    return { error: profileRes.error || 'Gagal membuat profil.' }
+  }
+
   return { success: true }
 }
 
 export async function listUserAccounts() {
-  const profiles = await supabaseRequest(
+  const res = await supabaseRequest(
     'profiles?select=id,email,nama,role,created_at&order=created_at.desc'
   )
 
-  return { profiles: profiles ?? [] }
+  if ('error' in res) {
+    return { error: res.error }
+  }
+
+  return { profiles: res.data ?? [] }
 }
 
 export async function deleteUserAccount(userId: string) {
   // Hapus user di Supabase Auth
-  await supabaseRequest(`auth/admin/users/${userId}`, { method: 'DELETE' })
+  const res = await supabaseRequest(`auth/admin/users/${userId}`, { method: 'DELETE' })
+
+  if ('error' in res) {
+    return { error: res.error }
+  }
 
   return { success: true }
 }
