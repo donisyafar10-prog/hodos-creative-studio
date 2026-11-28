@@ -42,11 +42,13 @@ export async function DELETE(
 ) {
   try {
     const { id } = params
+    // Hapus profil dulu supaya tidak ada foreign key constraint
+    await supabaseRequest(`profiles?id=eq.${id}`, { method: 'DELETE' })
+    // Baru hapus user di Supabase Auth
     const res = await supabaseRequest(`auth/admin/users/${id}`, { method: 'DELETE' })
     if ('error' in res) {
       return NextResponse.json({ error: res.error }, { status: 500 })
     }
-    await supabaseRequest(`profiles?id=eq.${id}`, { method: 'DELETE' })
     return NextResponse.json({ success: true })
   } catch (e) {
     return NextResponse.json({ error: e instanceof Error ? e.message : 'Unknown error' }, { status: 500 })
